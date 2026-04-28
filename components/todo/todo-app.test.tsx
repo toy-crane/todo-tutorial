@@ -378,6 +378,39 @@ describe("TodoApp 정렬", () => {
     );
   });
 
+  it('"마감일순" 선택 시 가까운 마감일부터 표시되고, 마감일 없는 항목은 맨 뒤로 간다', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+
+    await user.type(input, "노데드1{Enter}");
+    await user.type(input, "노데드2{Enter}");
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("20", { selector: "button" }));
+    await user.type(input, "마감20{Enter}");
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("10", { selector: "button" }));
+    await user.type(input, "마감10{Enter}");
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("15", { selector: "button" }));
+    await user.type(input, "마감15{Enter}");
+
+    await user.click(screen.getByRole("button", { name: "마감일순" }));
+
+    const texts = screen
+      .getAllByRole("listitem")
+      .map((i) => i.textContent ?? "");
+    expect(texts[0]).toContain("마감10");
+    expect(texts[1]).toContain("마감15");
+    expect(texts[2]).toContain("마감20");
+    expect(texts[3]).toMatch(/노데드[12]/);
+    expect(texts[4]).toMatch(/노데드[12]/);
+  });
+
   it('필터를 선택하면 정렬이 "생성일순" 으로 리셋된다 (단일 모드)', async () => {
     const user = userEvent.setup();
     render(<TodoApp />);
