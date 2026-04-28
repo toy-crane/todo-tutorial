@@ -433,3 +433,71 @@ describe("TodoApp 정렬", () => {
     );
   });
 });
+
+describe("TodoApp 검색", () => {
+  it("검색어 입력 시 제목 부분 일치 항목만 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+    await user.type(input, "월간 회의{Enter}");
+    await user.type(input, "장보기{Enter}");
+    await user.type(input, "주간 회의{Enter}");
+    await user.type(input, "운동{Enter}");
+
+    const search = screen.getByRole("searchbox", { name: "검색" });
+    await user.type(search, "회의");
+
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    items.forEach((item) => {
+      expect(item).toHaveTextContent(/회의/);
+    });
+  });
+
+  it("검색어를 지우면 전체 목록이 복원된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+    await user.type(input, "월간 회의{Enter}");
+    await user.type(input, "장보기{Enter}");
+    await user.type(input, "주간 회의{Enter}");
+
+    const search = screen.getByRole("searchbox", { name: "검색" });
+    await user.type(search, "회의");
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+
+    await user.clear(search);
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+  });
+
+  it("검색은 정렬과 조합 가능하다 (검색은 단일 모드에서 제외)", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+    await user.type(input, "다 회의{Enter}");
+    await user.type(input, "장보기{Enter}");
+    await user.type(input, "가 회의{Enter}");
+    await user.type(input, "나 회의{Enter}");
+
+    await user.click(screen.getByRole("button", { name: "이름순" }));
+
+    const search = screen.getByRole("searchbox", { name: "검색" });
+    await user.type(search, "회의");
+
+    const texts = screen
+      .getAllByRole("listitem")
+      .map((i) => i.textContent ?? "");
+    expect(texts).toHaveLength(3);
+    expect(texts[0]).toContain("가 회의");
+    expect(texts[1]).toContain("나 회의");
+    expect(texts[2]).toContain("다 회의");
+
+    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+});

@@ -34,6 +34,12 @@ export const TODO_SORT_LABEL: Record<TodoSort, string> = {
   dueDate: "마감일순",
 };
 
+export function applyTodoSearch(todos: Todo[], query: string): Todo[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return todos;
+  return todos.filter((t) => t.text.toLowerCase().includes(q));
+}
+
 export function applyTodoSort(todos: Todo[], sort: TodoSort): Todo[] {
   if (sort === "name") {
     return [...todos].sort((a, b) => a.text.localeCompare(b.text, "ko"));
