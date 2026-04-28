@@ -4,7 +4,7 @@ import { TodoItem } from "./todo-item";
 type Props = {
   todos: Todo[];
   hydrated: boolean;
-  emptyMessage?: string;
+  emptyMessage: string;
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
   onUpdate: (id: string, text: string) => void;
@@ -13,7 +13,7 @@ type Props = {
 export function TodoList({
   todos,
   hydrated,
-  emptyMessage = "할 일을 추가해보세요",
+  emptyMessage,
   onToggle,
   onRemove,
   onUpdate,
