@@ -4,7 +4,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { PRIORITY_LABEL, type Priority, type Todo } from "@/lib/todo";
+import {
+  PRIORITY_LABEL,
+  formatDueDate,
+  type Priority,
+  type Todo,
+} from "@/lib/todo";
 
 type Props = {
   todo: Todo;
@@ -69,6 +74,17 @@ export function TodoItem({ todo, onToggle, onRemove, onUpdate }: Props) {
           onDoubleClick={startEdit}
         >
           {todo.text}
+        </span>
+      )}
+      {todo.dueDate !== undefined && (
+        <span
+          className={cn(
+            "text-muted-foreground shrink-0 text-xs tabular-nums",
+            todo.completed && "opacity-50",
+          )}
+          aria-label={`마감일 ${formatDueDate(todo.dueDate)}`}
+        >
+          {formatDueDate(todo.dueDate)}
         </span>
       )}
       <span

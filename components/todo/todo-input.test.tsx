@@ -17,7 +17,7 @@ describe("TodoInput", () => {
     await user.type(input, "장보기{Enter}");
 
     expect(onAdd).toHaveBeenCalledTimes(1);
-    expect(onAdd).toHaveBeenCalledWith("장보기", "normal");
+    expect(onAdd).toHaveBeenCalledWith("장보기", "normal", undefined);
     expect(input.value).toBe("");
   });
 
@@ -63,6 +63,33 @@ describe("TodoInput", () => {
     await user.click(screen.getByRole("radio", { name: "높음" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "긴급 보고{Enter}");
 
-    expect(onAdd).toHaveBeenCalledWith("긴급 보고", "high");
+    expect(onAdd).toHaveBeenCalledWith("긴급 보고", "high", undefined);
+  });
+
+  it("DatePicker 로 마감일을 선택하면 트리거에 ISO 형식 날짜가 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoInput onAdd={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("15", { selector: "button" }));
+
+    expect(
+      screen.getByRole("button", { name: "마감일 선택" }),
+    ).toHaveTextContent(/^\d{4}-\d{2}-15$/);
+  });
+
+  it("마감일 선택 후 Enter 누르면 onAdd 의 세 번째 인자로 dueDate(number) 가 전달된다", async () => {
+    const onAdd = vi.fn();
+    const user = userEvent.setup();
+
+    render(<TodoInput onAdd={onAdd} />);
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("15", { selector: "button" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "회의{Enter}");
+
+    expect(onAdd).toHaveBeenCalledWith("회의", "normal", expect.any(Number));
+    const calledMs = onAdd.mock.calls[0][2] as number;
+    expect(new Date(calledMs).getDate()).toBe(15);
   });
 });

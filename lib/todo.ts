@@ -30,14 +30,28 @@ export type Todo = {
   completed: boolean;
   priority: Priority;
   createdAt: number;
+  dueDate?: number;
 };
 
-export function createTodo(text: string, priority: Priority = "normal"): Todo {
+export function createTodo(
+  text: string,
+  priority: Priority = "normal",
+  dueDate?: number,
+): Todo {
   return {
     id: crypto.randomUUID(),
     text,
     completed: false,
     priority,
     createdAt: Date.now(),
+    dueDate,
   };
+}
+
+export function formatDueDate(ms: number): string {
+  const d = new Date(ms);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }

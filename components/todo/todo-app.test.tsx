@@ -267,3 +267,45 @@ describe("TodoApp 필터링", () => {
     );
   });
 });
+
+describe("TodoApp 마감일", () => {
+  it("마감일 없이 추가하면 항목에 마감일 표시가 없다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "산책{Enter}");
+
+    const item = screen.getByRole("listitem");
+    expect(within(item).queryByLabelText(/^마감일/)).not.toBeInTheDocument();
+  });
+
+  it("DatePicker 로 마감일을 지정해 추가하면 항목에 마감일이 ISO 형식으로 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("15", { selector: "button" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "회의{Enter}");
+
+    const item = screen.getByRole("listitem");
+    const dueBadge = within(item).getByLabelText(/^마감일 \d{4}-\d{2}-15$/);
+    expect(dueBadge).toBeInTheDocument();
+  });
+
+  it("새로고침(재마운트) 후에도 마감일이 유지된다", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<TodoApp />);
+
+    await user.click(screen.getByRole("button", { name: "마감일 선택" }));
+    await user.click(screen.getByText("15", { selector: "button" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "기획안{Enter}");
+
+    unmount();
+    render(<TodoApp />);
+
+    const item = await screen.findByRole("listitem");
+    expect(
+      within(item).getByLabelText(/^마감일 \d{4}-\d{2}-15$/),
+    ).toBeInTheDocument();
+  });
+});

@@ -21,6 +21,7 @@ export function useTodos() {
             completed: Boolean(t.completed),
             priority: (t.priority ?? "normal") as Priority,
             createdAt: Number(t.createdAt ?? Date.now()),
+            dueDate: typeof t.dueDate === "number" ? t.dueDate : undefined,
           })),
         );
       }
@@ -33,10 +34,14 @@ export function useTodos() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }, [todos, hydrated]);
 
-  function addTodo(text: string, priority: Priority = "normal") {
+  function addTodo(
+    text: string,
+    priority: Priority = "normal",
+    dueDate?: number,
+  ) {
     const trimmed = text.trim();
     if (!trimmed) return;
-    setTodos((prev) => [createTodo(trimmed, priority), ...prev]);
+    setTodos((prev) => [createTodo(trimmed, priority, dueDate), ...prev]);
   }
 
   function toggleTodo(id: string) {
