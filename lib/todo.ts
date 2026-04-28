@@ -24,6 +24,22 @@ export function applyTodoFilter(todos: Todo[], filter: TodoFilter): Todo[] {
   return todos;
 }
 
+export type TodoSort = "createdAt" | "name";
+
+export const TODO_SORTS: TodoSort[] = ["createdAt", "name"];
+
+export const TODO_SORT_LABEL: Record<TodoSort, string> = {
+  createdAt: "생성일순",
+  name: "이름순",
+};
+
+export function applyTodoSort(todos: Todo[], sort: TodoSort): Todo[] {
+  if (sort === "name") {
+    return [...todos].sort((a, b) => a.text.localeCompare(b.text, "ko"));
+  }
+  return [...todos].sort((a, b) => b.createdAt - a.createdAt);
+}
+
 export type Todo = {
   id: string;
   text: string;

@@ -309,3 +309,94 @@ describe("TodoApp 마감일", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("TodoApp 정렬", () => {
+  async function seedFive(user: ReturnType<typeof userEvent.setup>) {
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+    await user.type(input, "다라마{Enter}");
+    await user.type(input, "가나{Enter}");
+    await user.type(input, "마바{Enter}");
+    await user.type(input, "라마바{Enter}");
+    await user.type(input, "나다{Enter}");
+  }
+
+  it('"이름순" 선택 시 항목이 가나다순으로 정렬된다', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedFive(user);
+    await user.click(screen.getByRole("button", { name: "이름순" }));
+
+    const texts = screen
+      .getAllByRole("listitem")
+      .map((i) => i.textContent ?? "");
+    expect(texts[0]).toContain("가나");
+    expect(texts[1]).toContain("나다");
+    expect(texts[2]).toContain("다라마");
+    expect(texts[3]).toContain("라마바");
+    expect(texts[4]).toContain("마바");
+  });
+
+  it('"생성일순" 선택 시 최신 추가된 항목이 가장 위에 온다', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedFive(user);
+    await user.click(screen.getByRole("button", { name: "이름순" }));
+    await user.click(screen.getByRole("button", { name: "생성일순" }));
+
+    const texts = screen
+      .getAllByRole("listitem")
+      .map((i) => i.textContent ?? "");
+    expect(texts[0]).toContain("나다");
+    expect(texts[4]).toContain("다라마");
+  });
+
+  it('정렬을 선택하면 active/completed 필터가 "전체" 로 리셋된다 (단일 모드)', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("button", { name: "진행중" }));
+    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    await user.click(screen.getByRole("button", { name: "이름순" }));
+
+    expect(screen.getByRole("button", { name: "전체" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  it('필터를 선택하면 정렬이 "생성일순" 으로 리셋된다 (단일 모드)', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("button", { name: "이름순" }));
+    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    await user.click(screen.getByRole("button", { name: "진행중" }));
+
+    expect(screen.getByRole("button", { name: "생성일순" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+  });
+});
