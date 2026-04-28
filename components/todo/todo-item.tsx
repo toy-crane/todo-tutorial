@@ -4,13 +4,19 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { Todo } from "@/lib/todo";
+import { PRIORITY_LABEL, type Priority, type Todo } from "@/lib/todo";
 
 type Props = {
   todo: Todo;
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
   onUpdate: (id: string, text: string) => void;
+};
+
+const PRIORITY_BADGE_CLASS: Record<Priority, string> = {
+  high: "bg-red-500/15 text-red-600 dark:text-red-400",
+  normal: "bg-muted text-muted-foreground",
+  low: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
 };
 
 export function TodoItem({ todo, onToggle, onRemove, onUpdate }: Props) {
@@ -65,6 +71,16 @@ export function TodoItem({ todo, onToggle, onRemove, onUpdate }: Props) {
           {todo.text}
         </span>
       )}
+      <span
+        className={cn(
+          "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
+          PRIORITY_BADGE_CLASS[todo.priority],
+          todo.completed && "opacity-50",
+        )}
+        aria-label={`우선순위 ${PRIORITY_LABEL[todo.priority]}`}
+      >
+        {PRIORITY_LABEL[todo.priority]}
+      </span>
       <Button
         variant="ghost"
         size="icon"

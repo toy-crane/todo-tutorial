@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createTodo, type Todo } from "@/lib/todo";
+import { createTodo, type Priority, type Todo } from "@/lib/todo";
 
 const STORAGE_KEY = "todo-tutorial:todos";
 
@@ -12,7 +12,18 @@ export function useTodos() {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setTodos(JSON.parse(raw) as Todo[]);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Array<Partial<Todo>>;
+        setTodos(
+          parsed.map((t) => ({
+            id: String(t.id ?? crypto.randomUUID()),
+            text: String(t.text ?? ""),
+            completed: Boolean(t.completed),
+            priority: (t.priority ?? "normal") as Priority,
+            createdAt: Number(t.createdAt ?? Date.now()),
+          })),
+        );
+      }
     } catch {}
     setHydrated(true);
   }, []);
@@ -22,10 +33,10 @@ export function useTodos() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   }, [todos, hydrated]);
 
-  function addTodo(text: string) {
+  function addTodo(text: string, priority: Priority = "normal") {
     const trimmed = text.trim();
     if (!trimmed) return;
-    setTodos((prev) => [createTodo(trimmed), ...prev]);
+    setTodos((prev) => [createTodo(trimmed, priority), ...prev]);
   }
 
   function toggleTodo(id: string) {

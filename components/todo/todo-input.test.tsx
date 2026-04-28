@@ -17,7 +17,7 @@ describe("TodoInput", () => {
     await user.type(input, "장보기{Enter}");
 
     expect(onAdd).toHaveBeenCalledTimes(1);
-    expect(onAdd).toHaveBeenCalledWith("장보기");
+    expect(onAdd).toHaveBeenCalledWith("장보기", "normal");
     expect(input.value).toBe("");
   });
 });
