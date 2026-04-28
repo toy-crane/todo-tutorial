@@ -12,7 +12,11 @@ type Props = {
 
 export function TodoFilters({ value, onChange }: Props) {
   return (
-    <div className="flex items-center gap-2">
+    <div
+      role="group"
+      aria-label="상태 필터"
+      className="flex items-center gap-2"
+    >
       {TODO_FILTERS.map((f) => {
         const active = value === f;
         return (

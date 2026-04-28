@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useTodos } from "@/hooks/use-todos";
 import {
+  applyCategoryFilter,
   applyTodoFilter,
   applyTodoSearch,
   applyTodoSort,
+  type CategoryFilter,
   type TodoFilter,
   type TodoSort,
 } from "@/lib/todo";
@@ -14,32 +16,44 @@ import { TodoList } from "./todo-list";
 import { TodoFilters } from "./todo-filter";
 import { TodoSorts } from "./todo-sort";
 import { TodoSearch } from "./todo-search";
+import { TodoCategoryFilter } from "./todo-category-filter";
 
 export function TodoApp() {
   const { todos, hydrated, addTodo, toggleTodo, removeTodo, updateTodoText } =
     useTodos();
   const [filter, setFilter] = useState<TodoFilter>("all");
   const [sort, setSort] = useState<TodoSort>("createdAt");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [query, setQuery] = useState("");
 
   function selectFilter(next: TodoFilter) {
     setFilter(next);
     setSort("createdAt");
+    setCategoryFilter("all");
   }
 
   function selectSort(next: TodoSort) {
     setSort(next);
     setFilter("all");
+    setCategoryFilter("all");
+  }
+
+  function selectCategoryFilter(next: CategoryFilter) {
+    setCategoryFilter(next);
+    setFilter("all");
+    setSort("createdAt");
   }
 
   const visibleTodos = applyTodoSort(
-    applyTodoSearch(applyTodoFilter(todos, filter), query),
+    applyCategoryFilter(
+      applyTodoSearch(applyTodoFilter(todos, filter), query),
+      categoryFilter,
+    ),
     sort,
   );
-  const emptyMessage =
-    filter === "all" && !query.trim()
-      ? "할 일을 추가해보세요"
-      : "할 일이 없습니다";
+  const isFiltered =
+    filter !== "all" || categoryFilter !== "all" || query.trim().length > 0;
+  const emptyMessage = isFiltered ? "할 일이 없습니다" : "할 일을 추가해보세요";
 
   return (
     <div className="mx-auto w-full max-w-lg space-y-4">
@@ -49,6 +63,10 @@ export function TodoApp() {
         <TodoFilters value={filter} onChange={selectFilter} />
         <TodoSorts value={sort} onChange={selectSort} />
       </div>
+      <TodoCategoryFilter
+        value={categoryFilter}
+        onChange={selectCategoryFilter}
+      />
       <TodoList
         todos={visibleTodos}
         hydrated={hydrated}

@@ -173,7 +173,8 @@ describe("TodoApp 필터링", () => {
     render(<TodoApp />);
 
     await seedFiveTodos(user);
-    await user.click(screen.getByRole("button", { name: "전체" }));
+    const statusGroup = screen.getByRole("group", { name: "상태 필터" });
+    await user.click(within(statusGroup).getByRole("button", { name: "전체" }));
 
     expect(screen.getAllByRole("listitem")).toHaveLength(5);
   });
@@ -243,10 +244,10 @@ describe("TodoApp 필터링", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    expect(screen.getByRole("button", { name: "전체" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    const statusGroup = screen.getByRole("group", { name: "상태 필터" });
+    expect(
+      within(statusGroup).getByRole("button", { name: "전체" }),
+    ).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
       "aria-pressed",
       "false",
@@ -258,10 +259,9 @@ describe("TodoApp 필터링", () => {
 
     await user.click(screen.getByRole("button", { name: "진행중" }));
 
-    expect(screen.getByRole("button", { name: "전체" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
+    expect(
+      within(statusGroup).getByRole("button", { name: "전체" }),
+    ).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
       "aria-pressed",
       "true",
@@ -365,10 +365,10 @@ describe("TodoApp 정렬", () => {
 
     await user.click(screen.getByRole("button", { name: "이름순" }));
 
-    expect(screen.getByRole("button", { name: "전체" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    const statusGroup = screen.getByRole("group", { name: "상태 필터" });
+    expect(
+      within(statusGroup).getByRole("button", { name: "전체" }),
+    ).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
       "aria-pressed",
       "false",
@@ -524,6 +524,76 @@ describe("TodoApp 카테고리", () => {
 
     const item = await screen.findByRole("listitem");
     expect(within(item).getByLabelText("카테고리 개인")).toBeInTheDocument();
+  });
+});
+
+describe("TodoApp 카테고리 필터", () => {
+  async function seedMixed(user: ReturnType<typeof userEvent.setup>) {
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.type(input, "기획안{Enter}");
+
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.type(input, "회의 정리{Enter}");
+
+    await user.click(screen.getByRole("checkbox", { name: "개인" }));
+    await user.type(input, "독서{Enter}");
+
+    await user.type(input, "산책{Enter}");
+  }
+
+  it('"업무" 카테고리 필터 선택 시 업무 카테고리를 가진 항목만 표시된다', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedMixed(user);
+
+    const filterRow = screen.getByRole("group", { name: "카테고리 필터" });
+    await user.click(within(filterRow).getByRole("button", { name: "업무" }));
+
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    items.forEach((item) => {
+      expect(within(item).getByLabelText("카테고리 업무")).toBeInTheDocument();
+    });
+  });
+
+  it('"전체" 선택 시 카테고리 필터가 해제되어 전체 목록이 표시된다', async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedMixed(user);
+
+    const filterRow = screen.getByRole("group", { name: "카테고리 필터" });
+    await user.click(within(filterRow).getByRole("button", { name: "업무" }));
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+
+    await user.click(within(filterRow).getByRole("button", { name: "전체" }));
+    expect(screen.getAllByRole("listitem")).toHaveLength(4);
+  });
+
+  it("카테고리 필터 선택 시 active/completed 필터와 정렬이 기본값으로 리셋된다 (단일 모드)", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("button", { name: "이름순" }));
+    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    const filterRow = screen.getByRole("group", { name: "카테고리 필터" });
+    await user.click(within(filterRow).getByRole("button", { name: "업무" }));
+
+    const statusGroup = screen.getByRole("group", { name: "상태 필터" });
+    expect(
+      within(statusGroup).getByRole("button", { name: "전체" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "생성일순" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 });
 

@@ -34,6 +34,16 @@ export const TODO_SORT_LABEL: Record<TodoSort, string> = {
   dueDate: "마감일순",
 };
 
+export type CategoryFilter = "all" | Category;
+
+export function applyCategoryFilter(
+  todos: Todo[],
+  filter: CategoryFilter,
+): Todo[] {
+  if (filter === "all") return todos;
+  return todos.filter((t) => t.categories.includes(filter));
+}
+
 export function applyTodoSearch(todos: Todo[], query: string): Todo[] {
   const q = query.trim().toLowerCase();
   if (!q) return todos;
