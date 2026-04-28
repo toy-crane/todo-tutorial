@@ -4,6 +4,7 @@ import { TodoItem } from "./todo-item";
 type Props = {
   todos: Todo[];
   hydrated: boolean;
+  emptyMessage?: string;
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
   onUpdate: (id: string, text: string) => void;
@@ -12,6 +13,7 @@ type Props = {
 export function TodoList({
   todos,
   hydrated,
+  emptyMessage = "할 일을 추가해보세요",
   onToggle,
   onRemove,
   onUpdate,
@@ -21,7 +23,7 @@ export function TodoList({
   if (todos.length === 0) {
     return (
       <p className="text-muted-foreground py-10 text-center text-sm">
-        할 일을 추가해보세요
+        {emptyMessage}
       </p>
     );
   }

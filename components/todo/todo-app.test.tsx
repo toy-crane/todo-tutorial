@@ -150,3 +150,120 @@ describe("TodoApp", () => {
     expect(within(item).getByLabelText("우선순위 높음")).toBeInTheDocument();
   });
 });
+
+describe("TodoApp 필터링", () => {
+  async function seedFiveTodos(user: ReturnType<typeof userEvent.setup>) {
+    const input = screen.getByPlaceholderText(PLACEHOLDER);
+    await user.type(input, "할일1{Enter}");
+    await user.type(input, "할일2{Enter}");
+    await user.type(input, "할일3{Enter}");
+    await user.type(input, "할일4{Enter}");
+    await user.type(input, "할일5{Enter}");
+
+    const items = screen.getAllByRole("listitem");
+    const target1 = items.find((i) => within(i).queryByText("할일1"))!;
+    const target2 = items.find((i) => within(i).queryByText("할일2"))!;
+    await user.click(within(target1).getByRole("checkbox"));
+    await user.click(within(target2).getByRole("checkbox"));
+  }
+
+  it("'전체' 필터 선택 시 5개(완료2 + 미완료3) 모두 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedFiveTodos(user);
+    await user.click(screen.getByRole("button", { name: "전체" }));
+
+    expect(screen.getAllByRole("listitem")).toHaveLength(5);
+  });
+
+  it("'진행중' 필터 선택 시 미완료 3개만 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedFiveTodos(user);
+    await user.click(screen.getByRole("button", { name: "진행중" }));
+
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(3);
+    items.forEach((item) => {
+      expect(within(item).getByRole("checkbox")).toHaveAttribute(
+        "aria-checked",
+        "false",
+      );
+    });
+  });
+
+  it("'완료' 필터 선택 시 완료 2개만 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedFiveTodos(user);
+    await user.click(screen.getByRole("button", { name: "완료" }));
+
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    items.forEach((item) => {
+      expect(within(item).getByRole("checkbox")).toHaveAttribute(
+        "aria-checked",
+        "true",
+      );
+    });
+  });
+
+  it("Todo 0개 상태에서 '진행중' 선택 시 '할 일이 없습니다' 메시지가 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("button", { name: "진행중" }));
+
+    expect(screen.getByText("할 일이 없습니다")).toBeInTheDocument();
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+  });
+
+  it("'완료' 필터 선택 중 항목을 미완료로 변경하면 목록에서 사라진다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await seedFiveTodos(user);
+    await user.click(screen.getByRole("button", { name: "완료" }));
+
+    const completedItems = screen.getAllByRole("listitem");
+    expect(completedItems).toHaveLength(2);
+
+    const target = completedItems.find((i) => within(i).queryByText("할일1"))!;
+    await user.click(within(target).getByRole("checkbox"));
+
+    expect(screen.queryByText("할일1")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+  });
+
+  it("현재 선택된 필터 버튼만 aria-pressed=true 로 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    expect(screen.getByRole("button", { name: "전체" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    expect(screen.getByRole("button", { name: "완료" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+
+    await user.click(screen.getByRole("button", { name: "진행중" }));
+
+    expect(screen.getByRole("button", { name: "전체" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+});
