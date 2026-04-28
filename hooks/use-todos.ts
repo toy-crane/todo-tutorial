@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createTodo, type Priority, type Todo } from "@/lib/todo";
+import {
+  CATEGORIES,
+  createTodo,
+  type Category,
+  type Priority,
+  type Todo,
+} from "@/lib/todo";
 
 const STORAGE_KEY = "todo-tutorial:todos";
 
@@ -22,6 +28,11 @@ export function useTodos() {
             priority: (t.priority ?? "normal") as Priority,
             createdAt: Number(t.createdAt ?? Date.now()),
             dueDate: typeof t.dueDate === "number" ? t.dueDate : undefined,
+            categories: Array.isArray(t.categories)
+              ? (t.categories.filter((c) =>
+                  CATEGORIES.includes(c as Category),
+                ) as Category[])
+              : [],
           })),
         );
       }
@@ -38,10 +49,14 @@ export function useTodos() {
     text: string,
     priority: Priority = "normal",
     dueDate?: number,
+    categories: Category[] = [],
   ) {
     const trimmed = text.trim();
     if (!trimmed) return;
-    setTodos((prev) => [createTodo(trimmed, priority, dueDate), ...prev]);
+    setTodos((prev) => [
+      createTodo(trimmed, priority, dueDate, categories),
+      ...prev,
+    ]);
   }
 
   function toggleTodo(id: string) {

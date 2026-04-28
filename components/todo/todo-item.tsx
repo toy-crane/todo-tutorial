@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
+  CATEGORY_LABEL,
   PRIORITY_LABEL,
   formatDueDate,
+  type Category,
   type Priority,
   type Todo,
 } from "@/lib/todo";
@@ -22,6 +24,12 @@ const PRIORITY_BADGE_CLASS: Record<Priority, string> = {
   high: "bg-red-500/15 text-red-600 dark:text-red-400",
   normal: "bg-muted text-muted-foreground",
   low: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+};
+
+const CATEGORY_BADGE_CLASS: Record<Category, string> = {
+  work: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+  personal: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+  shopping: "bg-violet-500/15 text-violet-600 dark:text-violet-400",
 };
 
 export function TodoItem({ todo, onToggle, onRemove, onUpdate }: Props) {
@@ -87,6 +95,19 @@ export function TodoItem({ todo, onToggle, onRemove, onUpdate }: Props) {
           {formatDueDate(todo.dueDate)}
         </span>
       )}
+      {todo.categories.map((c) => (
+        <span
+          key={c}
+          className={cn(
+            "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
+            CATEGORY_BADGE_CLASS[c],
+            todo.completed && "opacity-50",
+          )}
+          aria-label={`카테고리 ${CATEGORY_LABEL[c]}`}
+        >
+          {CATEGORY_LABEL[c]}
+        </span>
+      ))}
       <span
         className={cn(
           "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",

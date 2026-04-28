@@ -10,14 +10,22 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
+  CATEGORIES,
+  CATEGORY_LABEL,
   PRIORITIES,
   PRIORITY_LABEL,
   formatDueDate,
+  type Category,
   type Priority,
 } from "@/lib/todo";
 
 type Props = {
-  onAdd: (text: string, priority: Priority, dueDate?: number) => void;
+  onAdd: (
+    text: string,
+    priority: Priority,
+    dueDate: number | undefined,
+    categories: Category[],
+  ) => void;
 };
 
 const PRIORITY_ACTIVE_CLASS: Record<Priority, string> = {
@@ -31,12 +39,20 @@ export function TodoInput({ onAdd }: Props) {
   const [priority, setPriority] = useState<Priority>("normal");
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  function toggleCategory(c: Category) {
+    setCategories((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
+    );
+  }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
-      onAdd(value, priority, dueDate ? dueDate.getTime() : undefined);
+      onAdd(value, priority, dueDate ? dueDate.getTime() : undefined, categories);
       setValue("");
       setDueDate(undefined);
+      setCategories([]);
     }
   }
 
@@ -114,6 +130,33 @@ export function TodoInput({ onAdd }: Props) {
             </button>
           )}
         </div>
+      </div>
+      <div
+        role="group"
+        aria-label="카테고리"
+        className="flex items-center gap-2"
+      >
+        {CATEGORIES.map((c) => {
+          const active = categories.includes(c);
+          return (
+            <button
+              key={c}
+              type="button"
+              role="checkbox"
+              aria-checked={active}
+              aria-label={CATEGORY_LABEL[c]}
+              onClick={() => toggleCategory(c)}
+              className={cn(
+                "rounded-md border px-3 py-1 text-xs transition-colors",
+                active
+                  ? "border-foreground/40 bg-foreground/5 text-foreground"
+                  : "border-border text-muted-foreground hover:bg-muted",
+              )}
+            >
+              {CATEGORY_LABEL[c]}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

@@ -52,6 +52,16 @@ export function applyTodoSort(todos: Todo[], sort: TodoSort): Todo[] {
   return [...todos].sort((a, b) => b.createdAt - a.createdAt);
 }
 
+export type Category = "work" | "personal" | "shopping";
+
+export const CATEGORIES: Category[] = ["work", "personal", "shopping"];
+
+export const CATEGORY_LABEL: Record<Category, string> = {
+  work: "업무",
+  personal: "개인",
+  shopping: "쇼핑",
+};
+
 export type Todo = {
   id: string;
   text: string;
@@ -59,12 +69,14 @@ export type Todo = {
   priority: Priority;
   createdAt: number;
   dueDate?: number;
+  categories: Category[];
 };
 
 export function createTodo(
   text: string,
   priority: Priority = "normal",
   dueDate?: number,
+  categories: Category[] = [],
 ): Todo {
   return {
     id: crypto.randomUUID(),
@@ -73,6 +85,7 @@ export function createTodo(
     priority,
     createdAt: Date.now(),
     dueDate,
+    categories,
   };
 }
 

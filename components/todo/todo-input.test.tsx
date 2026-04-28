@@ -17,7 +17,7 @@ describe("TodoInput", () => {
     await user.type(input, "장보기{Enter}");
 
     expect(onAdd).toHaveBeenCalledTimes(1);
-    expect(onAdd).toHaveBeenCalledWith("장보기", "normal", undefined);
+    expect(onAdd).toHaveBeenCalledWith("장보기", "normal", undefined, []);
     expect(input.value).toBe("");
   });
 
@@ -63,7 +63,7 @@ describe("TodoInput", () => {
     await user.click(screen.getByRole("radio", { name: "높음" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "긴급 보고{Enter}");
 
-    expect(onAdd).toHaveBeenCalledWith("긴급 보고", "high", undefined);
+    expect(onAdd).toHaveBeenCalledWith("긴급 보고", "high", undefined, []);
   });
 
   it("DatePicker 로 마감일을 선택하면 트리거에 ISO 형식 날짜가 표시된다", async () => {
@@ -88,8 +88,45 @@ describe("TodoInput", () => {
     await user.click(screen.getByText("15", { selector: "button" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "회의{Enter}");
 
-    expect(onAdd).toHaveBeenCalledWith("회의", "normal", expect.any(Number));
+    expect(onAdd).toHaveBeenCalledWith(
+      "회의",
+      "normal",
+      expect.any(Number),
+      [],
+    );
     const calledMs = onAdd.mock.calls[0][2] as number;
     expect(new Date(calledMs).getDate()).toBe(15);
+  });
+
+  it("카테고리 토글 후 추가하면 onAdd 의 4번째 인자로 categories 배열이 전달된다", async () => {
+    const onAdd = vi.fn();
+    const user = userEvent.setup();
+
+    render(<TodoInput onAdd={onAdd} />);
+
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("checkbox", { name: "쇼핑" }));
+    await user.type(
+      screen.getByPlaceholderText(PLACEHOLDER),
+      "주문서 정리{Enter}",
+    );
+
+    expect(onAdd).toHaveBeenCalledWith("주문서 정리", "normal", undefined, [
+      "work",
+      "shopping",
+    ]);
+  });
+
+  it("카테고리 토글을 다시 누르면 선택이 해제된다", async () => {
+    const onAdd = vi.fn();
+    const user = userEvent.setup();
+
+    render(<TodoInput onAdd={onAdd} />);
+
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "산책{Enter}");
+
+    expect(onAdd).toHaveBeenCalledWith("산책", "normal", undefined, []);
   });
 });

@@ -42,7 +42,8 @@ describe("TodoApp", () => {
     const text = screen.getByText("운동");
     expect(text).not.toHaveClass("line-through");
 
-    const checkbox = screen.getByRole("checkbox");
+    const item = screen.getByRole("listitem");
+    const checkbox = within(item).getByRole("checkbox");
     await user.click(checkbox);
 
     expect(checkbox).toHaveAttribute("aria-checked", "true");
@@ -472,6 +473,61 @@ describe("TodoApp 검색", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
+});
+
+describe("TodoApp 카테고리", () => {
+  it("카테고리 선택 후 추가하면 항목에 카테고리 배지가 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "기획안{Enter}");
+
+    const item = screen.getByRole("listitem");
+    expect(within(item).getByLabelText("카테고리 업무")).toHaveTextContent(
+      "업무",
+    );
+  });
+
+  it("여러 카테고리를 선택하면 모든 배지가 표시된다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("checkbox", { name: "쇼핑" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "경비 정리{Enter}");
+
+    const item = screen.getByRole("listitem");
+    expect(within(item).getByLabelText("카테고리 업무")).toBeInTheDocument();
+    expect(within(item).getByLabelText("카테고리 쇼핑")).toBeInTheDocument();
+  });
+
+  it("카테고리 미선택 시 배지가 표시되지 않는다", async () => {
+    const user = userEvent.setup();
+    render(<TodoApp />);
+
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "산책{Enter}");
+
+    const item = screen.getByRole("listitem");
+    expect(within(item).queryByLabelText(/^카테고리/)).not.toBeInTheDocument();
+  });
+
+  it("새로고침(재마운트) 후에도 카테고리가 유지된다", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<TodoApp />);
+
+    await user.click(screen.getByRole("checkbox", { name: "개인" }));
+    await user.type(screen.getByPlaceholderText(PLACEHOLDER), "운동{Enter}");
+
+    unmount();
+    render(<TodoApp />);
+
+    const item = await screen.findByRole("listitem");
+    expect(within(item).getByLabelText("카테고리 개인")).toBeInTheDocument();
+  });
+});
+
+describe("TodoApp 검색-정렬 조합", () => {
   it("검색은 정렬과 조합 가능하다 (검색은 단일 모드에서 제외)", async () => {
     const user = userEvent.setup();
     render(<TodoApp />);
