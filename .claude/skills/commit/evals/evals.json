@@ -1,0 +1,26 @@
+{
+  "skill_name": "commit",
+  "evals": [
+    {
+      "id": 0,
+      "name": "single-logical-unit-feature-with-test",
+      "prompt": "커밋해줘",
+      "fixture_description": "Single logical unit: new TodoItem component + its test in same module. Should produce one feat commit.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "two-logical-units-feat-and-docs",
+      "prompt": "커밋해줘",
+      "fixture_description": "Two unrelated changes: new login function in auth module + typo fix in README. Should produce two separate commits (feat + docs).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "three-logical-units-feat-fix-chore",
+      "prompt": "커밋해줘",
+      "fixture_description": "Three unrelated changes: new sort feature in TodoList + null-handling bug fix in Filter + dependency lockfile update. Should produce three separate commits (feat + fix + chore).",
+      "files": []
+    }
+  ]
+}
