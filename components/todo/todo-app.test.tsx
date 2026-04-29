@@ -106,7 +106,8 @@ describe("TodoApp", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("radio", { name: "높음" }));
+    const priorityGroup = screen.getByRole("group", { name: "우선순위" });
+    await user.click(within(priorityGroup).getByRole("radio", { name: "높음" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "긴급 보고{Enter}");
 
     const item = screen.getByRole("listitem");
@@ -174,7 +175,7 @@ describe("TodoApp 필터링", () => {
 
     await seedFiveTodos(user);
     const statusGroup = screen.getByRole("group", { name: "상태 필터" });
-    await user.click(within(statusGroup).getByRole("button", { name: "전체" }));
+    await user.click(within(statusGroup).getByRole("radio", { name: "전체" }));
 
     expect(screen.getAllByRole("listitem")).toHaveLength(5);
   });
@@ -184,7 +185,7 @@ describe("TodoApp 필터링", () => {
     render(<TodoApp />);
 
     await seedFiveTodos(user);
-    await user.click(screen.getByRole("button", { name: "진행중" }));
+    await user.click(screen.getByRole("radio", { name: "진행중" }));
 
     const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(3);
@@ -201,7 +202,7 @@ describe("TodoApp 필터링", () => {
     render(<TodoApp />);
 
     await seedFiveTodos(user);
-    await user.click(screen.getByRole("button", { name: "완료" }));
+    await user.click(screen.getByRole("radio", { name: "완료" }));
 
     const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(2);
@@ -217,7 +218,7 @@ describe("TodoApp 필터링", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("button", { name: "진행중" }));
+    await user.click(screen.getByRole("radio", { name: "진행중" }));
 
     expect(screen.getByText("할 일이 없습니다")).toBeInTheDocument();
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
@@ -228,7 +229,7 @@ describe("TodoApp 필터링", () => {
     render(<TodoApp />);
 
     await seedFiveTodos(user);
-    await user.click(screen.getByRole("button", { name: "완료" }));
+    await user.click(screen.getByRole("radio", { name: "완료" }));
 
     const completedItems = screen.getAllByRole("listitem");
     expect(completedItems).toHaveLength(2);
@@ -240,32 +241,29 @@ describe("TodoApp 필터링", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(1);
   });
 
-  it("현재 선택된 필터 버튼만 aria-pressed=true 로 표시된다", async () => {
+  it("현재 선택된 필터만 aria-checked=true 로 표시된다", async () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
     const statusGroup = screen.getByRole("group", { name: "상태 필터" });
     expect(
-      within(statusGroup).getByRole("button", { name: "전체" }),
-    ).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
-    expect(screen.getByRole("button", { name: "완료" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
+      within(statusGroup).getByRole("radio", { name: "전체" }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(
+      within(statusGroup).getByRole("radio", { name: "진행중" }),
+    ).toHaveAttribute("aria-checked", "false");
+    expect(
+      within(statusGroup).getByRole("radio", { name: "완료" }),
+    ).toHaveAttribute("aria-checked", "false");
 
-    await user.click(screen.getByRole("button", { name: "진행중" }));
+    await user.click(within(statusGroup).getByRole("radio", { name: "진행중" }));
 
     expect(
-      within(statusGroup).getByRole("button", { name: "전체" }),
-    ).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+      within(statusGroup).getByRole("radio", { name: "전체" }),
+    ).toHaveAttribute("aria-checked", "false");
+    expect(
+      within(statusGroup).getByRole("radio", { name: "진행중" }),
+    ).toHaveAttribute("aria-checked", "true");
   });
 });
 
@@ -326,7 +324,7 @@ describe("TodoApp 정렬", () => {
     render(<TodoApp />);
 
     await seedFive(user);
-    await user.click(screen.getByRole("button", { name: "이름순" }));
+    await user.click(screen.getByRole("radio", { name: "이름순" }));
 
     const texts = screen
       .getAllByRole("listitem")
@@ -343,8 +341,8 @@ describe("TodoApp 정렬", () => {
     render(<TodoApp />);
 
     await seedFive(user);
-    await user.click(screen.getByRole("button", { name: "이름순" }));
-    await user.click(screen.getByRole("button", { name: "생성일순" }));
+    await user.click(screen.getByRole("radio", { name: "이름순" }));
+    await user.click(screen.getByRole("radio", { name: "생성일순" }));
 
     const texts = screen
       .getAllByRole("listitem")
@@ -357,24 +355,24 @@ describe("TodoApp 정렬", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("button", { name: "진행중" }));
-    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
-      "aria-pressed",
+    await user.click(screen.getByRole("radio", { name: "진행중" }));
+    expect(screen.getByRole("radio", { name: "진행중" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
 
-    await user.click(screen.getByRole("button", { name: "이름순" }));
+    await user.click(screen.getByRole("radio", { name: "이름순" }));
 
     const statusGroup = screen.getByRole("group", { name: "상태 필터" });
     expect(
-      within(statusGroup).getByRole("button", { name: "전체" }),
-    ).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "진행중" })).toHaveAttribute(
-      "aria-pressed",
+      within(statusGroup).getByRole("radio", { name: "전체" }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "진행중" })).toHaveAttribute(
+      "aria-checked",
       "false",
     );
-    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("radio", { name: "이름순" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
   });
@@ -400,7 +398,7 @@ describe("TodoApp 정렬", () => {
     await user.click(screen.getByText("15", { selector: "button" }));
     await user.type(input, "마감15{Enter}");
 
-    await user.click(screen.getByRole("button", { name: "마감일순" }));
+    await user.click(screen.getByRole("radio", { name: "마감일순" }));
 
     const texts = screen
       .getAllByRole("listitem")
@@ -416,20 +414,20 @@ describe("TodoApp 정렬", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("button", { name: "이름순" }));
-    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
-      "aria-pressed",
+    await user.click(screen.getByRole("radio", { name: "이름순" }));
+    expect(screen.getByRole("radio", { name: "이름순" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
 
-    await user.click(screen.getByRole("button", { name: "진행중" }));
+    await user.click(screen.getByRole("radio", { name: "진행중" }));
 
-    expect(screen.getByRole("button", { name: "생성일순" })).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("radio", { name: "생성일순" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
-    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("radio", { name: "이름순" })).toHaveAttribute(
+      "aria-checked",
       "false",
     );
   });
@@ -480,7 +478,7 @@ describe("TodoApp 카테고리", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "기획안{Enter}");
 
     const item = screen.getByRole("listitem");
@@ -493,8 +491,8 @@ describe("TodoApp 카테고리", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
-    await user.click(screen.getByRole("checkbox", { name: "쇼핑" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "쇼핑" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "경비 정리{Enter}");
 
     const item = screen.getByRole("listitem");
@@ -516,7 +514,7 @@ describe("TodoApp 카테고리", () => {
     const user = userEvent.setup();
     const { unmount } = render(<TodoApp />);
 
-    await user.click(screen.getByRole("checkbox", { name: "개인" }));
+    await user.click(screen.getByRole("button", { name: "개인" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "운동{Enter}");
 
     unmount();
@@ -531,13 +529,13 @@ describe("TodoApp 카테고리 필터", () => {
   async function seedMixed(user: ReturnType<typeof userEvent.setup>) {
     const input = screen.getByPlaceholderText(PLACEHOLDER);
 
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
     await user.type(input, "기획안{Enter}");
 
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
     await user.type(input, "회의 정리{Enter}");
 
-    await user.click(screen.getByRole("checkbox", { name: "개인" }));
+    await user.click(screen.getByRole("button", { name: "개인" }));
     await user.type(input, "독서{Enter}");
 
     await user.type(input, "산책{Enter}");
@@ -550,7 +548,7 @@ describe("TodoApp 카테고리 필터", () => {
     await seedMixed(user);
 
     const filterRow = screen.getByRole("group", { name: "카테고리 필터" });
-    await user.click(within(filterRow).getByRole("button", { name: "업무" }));
+    await user.click(within(filterRow).getByRole("radio", { name: "업무" }));
 
     const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(2);
@@ -566,10 +564,10 @@ describe("TodoApp 카테고리 필터", () => {
     await seedMixed(user);
 
     const filterRow = screen.getByRole("group", { name: "카테고리 필터" });
-    await user.click(within(filterRow).getByRole("button", { name: "업무" }));
+    await user.click(within(filterRow).getByRole("radio", { name: "업무" }));
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
 
-    await user.click(within(filterRow).getByRole("button", { name: "전체" }));
+    await user.click(within(filterRow).getByRole("radio", { name: "전체" }));
     expect(screen.getAllByRole("listitem")).toHaveLength(4);
   });
 
@@ -577,21 +575,21 @@ describe("TodoApp 카테고리 필터", () => {
     const user = userEvent.setup();
     render(<TodoApp />);
 
-    await user.click(screen.getByRole("button", { name: "이름순" }));
-    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
-      "aria-pressed",
+    await user.click(screen.getByRole("radio", { name: "이름순" }));
+    expect(screen.getByRole("radio", { name: "이름순" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
 
     const filterRow = screen.getByRole("group", { name: "카테고리 필터" });
-    await user.click(within(filterRow).getByRole("button", { name: "업무" }));
+    await user.click(within(filterRow).getByRole("radio", { name: "업무" }));
 
     const statusGroup = screen.getByRole("group", { name: "상태 필터" });
     expect(
-      within(statusGroup).getByRole("button", { name: "전체" }),
-    ).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "생성일순" })).toHaveAttribute(
-      "aria-pressed",
+      within(statusGroup).getByRole("radio", { name: "전체" }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "생성일순" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
   });
@@ -608,7 +606,7 @@ describe("TodoApp 검색-정렬 조합", () => {
     await user.type(input, "가 회의{Enter}");
     await user.type(input, "나 회의{Enter}");
 
-    await user.click(screen.getByRole("button", { name: "이름순" }));
+    await user.click(screen.getByRole("radio", { name: "이름순" }));
 
     const search = screen.getByRole("searchbox", { name: "검색" });
     await user.type(search, "회의");
@@ -621,8 +619,8 @@ describe("TodoApp 검색-정렬 조합", () => {
     expect(texts[1]).toContain("나 회의");
     expect(texts[2]).toContain("다 회의");
 
-    expect(screen.getByRole("button", { name: "이름순" })).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("radio", { name: "이름순" })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
   });

@@ -104,8 +104,8 @@ describe("TodoInput", () => {
 
     render(<TodoInput onAdd={onAdd} />);
 
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
-    await user.click(screen.getByRole("checkbox", { name: "쇼핑" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "쇼핑" }));
     await user.type(
       screen.getByPlaceholderText(PLACEHOLDER),
       "주문서 정리{Enter}",
@@ -123,8 +123,8 @@ describe("TodoInput", () => {
 
     render(<TodoInput onAdd={onAdd} />);
 
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
-    await user.click(screen.getByRole("checkbox", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
+    await user.click(screen.getByRole("button", { name: "업무" }));
     await user.type(screen.getByPlaceholderText(PLACEHOLDER), "산책{Enter}");
 
     expect(onAdd).toHaveBeenCalledWith("산책", "normal", undefined, []);

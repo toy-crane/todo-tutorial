@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CATEGORIES, CATEGORY_LABEL, type CategoryFilter } from "@/lib/todo";
 
 type Props = {
@@ -13,30 +13,21 @@ const OPTIONS: { value: CategoryFilter; label: string }[] = [
 
 export function TodoCategoryFilter({ value, onChange }: Props) {
   return (
-    <div
-      role="group"
+    <ToggleGroup
+      type="single"
+      value={value}
+      onValueChange={(next) => {
+        if (next) onChange(next as CategoryFilter);
+      }}
+      variant="outline"
+      size="sm"
       aria-label="카테고리 필터"
-      className="flex items-center gap-2"
     >
-      {OPTIONS.map((opt) => {
-        const active = value === opt.value;
-        return (
-          <button
-            key={opt.value}
-            type="button"
-            aria-pressed={active}
-            onClick={() => onChange(opt.value)}
-            className={cn(
-              "rounded-md border px-3 py-1 text-xs transition-colors",
-              active
-                ? "border-foreground/40 bg-foreground/5 text-foreground"
-                : "border-border text-muted-foreground hover:bg-muted",
-            )}
-          >
-            {opt.label}
-          </button>
-        );
-      })}
-    </div>
+      {OPTIONS.map((opt) => (
+        <ToggleGroupItem key={opt.value} value={opt.value}>
+          {opt.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   );
 }

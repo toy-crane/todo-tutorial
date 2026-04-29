@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Calendar as CalendarIcon, X } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -7,7 +8,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/toggle-group";
+import { Field, FieldGroup } from "@/components/ui/field";
 import {
   CATEGORIES,
   CATEGORY_LABEL,
@@ -27,24 +32,12 @@ type Props = {
   ) => void;
 };
 
-const PRIORITY_ACTIVE_CLASS: Record<Priority, string> = {
-  high: "border-red-500 bg-red-500/10 text-red-600 dark:text-red-400",
-  normal: "border-foreground/40 bg-foreground/5 text-foreground",
-  low: "border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-};
-
 export function TodoInput({ onAdd }: Props) {
   const [value, setValue] = useState("");
   const [priority, setPriority] = useState<Priority>("normal");
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-
-  function toggleCategory(c: Category) {
-    setCategories((prev) =>
-      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
-    );
-  }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -56,56 +49,44 @@ export function TodoInput({ onAdd }: Props) {
   }
 
   return (
-    <div className="space-y-2">
-      <Input
-        placeholder="할 일을 입력하고 Enter 를 누르세요"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <div className="flex items-center gap-2">
-        <div
-          role="radiogroup"
+    <FieldGroup className="gap-3">
+      <Field>
+        <Input
+          placeholder="할 일을 입력하고 Enter 를 누르세요"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+      </Field>
+      <Field orientation="horizontal">
+        <ToggleGroup
+          type="single"
+          value={priority}
+          onValueChange={(next) => {
+            if (next) setPriority(next as Priority);
+          }}
+          variant="outline"
+          size="sm"
           aria-label="우선순위"
-          className="flex items-center gap-2"
         >
-          {PRIORITIES.map((p) => {
-            const active = priority === p;
-            return (
-              <button
-                key={p}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                onClick={() => setPriority(p)}
-                className={cn(
-                  "rounded-md border px-3 py-1 text-xs transition-colors",
-                  active
-                    ? PRIORITY_ACTIVE_CLASS[p]
-                    : "border-border text-muted-foreground hover:bg-muted",
-                )}
-              >
-                {PRIORITY_LABEL[p]}
-              </button>
-            );
-          })}
-        </div>
+          {PRIORITIES.map((p) => (
+            <ToggleGroupItem key={p} value={p}>
+              {PRIORITY_LABEL[p]}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
         <div className="ml-auto flex items-center gap-1">
           <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
             <PopoverTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 aria-label="마감일 선택"
-                className={cn(
-                  "flex items-center gap-1 rounded-md border px-3 py-1 text-xs transition-colors",
-                  dueDate
-                    ? "border-foreground/40 bg-foreground/5 text-foreground"
-                    : "border-border text-muted-foreground hover:bg-muted",
-                )}
               >
-                <CalendarIcon size={14} />
+                <CalendarIcon data-icon="inline-start" />
                 {dueDate ? formatDueDate(dueDate.getTime()) : "마감일"}
-              </button>
+              </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">
               <Calendar
@@ -119,44 +100,39 @@ export function TodoInput({ onAdd }: Props) {
             </PopoverContent>
           </Popover>
           {dueDate && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               aria-label="마감일 지우기"
               onClick={() => setDueDate(undefined)}
-              className="text-muted-foreground hover:text-destructive rounded-md p-1"
+              className="text-muted-foreground hover:text-destructive"
             >
-              <X size={14} />
-            </button>
+              <X />
+            </Button>
           )}
         </div>
-      </div>
-      <div
-        role="group"
-        aria-label="카테고리"
-        className="flex items-center gap-2"
-      >
-        {CATEGORIES.map((c) => {
-          const active = categories.includes(c);
-          return (
-            <button
+      </Field>
+      <Field>
+        <ToggleGroup
+          type="multiple"
+          value={categories}
+          onValueChange={(next) => setCategories(next as Category[])}
+          variant="outline"
+          size="sm"
+          aria-label="카테고리"
+        >
+          {CATEGORIES.map((c) => (
+            <ToggleGroupItem
               key={c}
-              type="button"
-              role="checkbox"
-              aria-checked={active}
+              value={c}
               aria-label={CATEGORY_LABEL[c]}
-              onClick={() => toggleCategory(c)}
-              className={cn(
-                "rounded-md border px-3 py-1 text-xs transition-colors",
-                active
-                  ? "border-foreground/40 bg-foreground/5 text-foreground"
-                  : "border-border text-muted-foreground hover:bg-muted",
-              )}
             >
               {CATEGORY_LABEL[c]}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </Field>
+    </FieldGroup>
   );
 }
