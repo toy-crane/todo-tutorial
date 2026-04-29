@@ -38,3 +38,6 @@ next-env.d.ts
 
 # skill eval workspaces
 .claude/skills/*-workspace/
+
+# claude runtime locks
+.claude/scheduled_tasks.lock
