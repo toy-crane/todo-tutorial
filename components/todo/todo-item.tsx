@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Trash } from "@phosphor-icons/react";
+import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +23,7 @@ type Props = {
 
 const PRIORITY_BADGE_CLASS: Record<Priority, string> = {
   high: "bg-red-500/15 text-red-600 dark:text-red-400",
-  normal: "bg-muted text-muted-foreground",
+  normal: "",
   low: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
 };
 
@@ -96,35 +97,36 @@ export function TodoItem({ todo, onToggle, onRemove, onUpdate }: Props) {
         </span>
       )}
       {todo.categories.map((c) => (
-        <span
+        <Badge
           key={c}
+          variant="secondary"
           className={cn(
-            "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
             CATEGORY_BADGE_CLASS[c],
             todo.completed && "opacity-50",
           )}
           aria-label={`카테고리 ${CATEGORY_LABEL[c]}`}
         >
           {CATEGORY_LABEL[c]}
-        </span>
+        </Badge>
       ))}
-      <span
+      <Badge
+        variant="secondary"
         className={cn(
-          "shrink-0 rounded-md px-2 py-0.5 text-xs font-medium",
           PRIORITY_BADGE_CLASS[todo.priority],
           todo.completed && "opacity-50",
         )}
         aria-label={`우선순위 ${PRIORITY_LABEL[todo.priority]}`}
       >
         {PRIORITY_LABEL[todo.priority]}
-      </span>
+      </Badge>
       <Button
         variant="ghost"
-        size="icon"
-        className="text-muted-foreground hover:text-destructive size-7 shrink-0"
+        size="icon-sm"
+        className="text-muted-foreground hover:text-destructive"
+        aria-label="삭제"
         onClick={() => onRemove(todo.id)}
       >
-        <Trash size={16} />
+        <Trash />
       </Button>
     </div>
   );
