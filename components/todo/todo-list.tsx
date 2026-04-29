@@ -1,3 +1,11 @@
+import { ClipboardText } from "@phosphor-icons/react";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import type { Todo } from "@/lib/todo";
 import { TodoItem } from "./todo-item";
 
@@ -22,9 +30,17 @@ export function TodoList({
 
   if (todos.length === 0) {
     return (
-      <p className="text-muted-foreground py-10 text-center text-sm">
-        {emptyMessage}
-      </p>
+      <Empty className="border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <ClipboardText />
+          </EmptyMedia>
+          <EmptyTitle>{emptyMessage}</EmptyTitle>
+          <EmptyDescription>
+            상단 입력창에 할 일을 적고 Enter 키를 누르세요.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
