@@ -56,7 +56,7 @@ export function TodoApp() {
   const emptyMessage = isFiltered ? "할 일이 없습니다" : "할 일을 추가해보세요";
 
   return (
-    <div className="mx-auto w-full max-w-lg space-y-4">
+    <div className="flex w-full flex-col gap-4">
       <TodoInput onAdd={addTodo} />
       <TodoSearch value={query} onChange={setQuery} />
       <div className="flex flex-wrap items-center justify-between gap-2">
