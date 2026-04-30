@@ -43,6 +43,20 @@ bun run format     # Prettier 포맷팅
 git checkout ch02-03
 ```
 
+## GitHub Actions 워크플로우
+
+이 저장소에는 두 가지 Claude Code GitHub Actions 워크플로우가 포함돼 있습니다.
+
+### Claude Code Review (`claude-code-review.yml`)
+
+PR이 열리거나 업데이트될 때 자동으로 코드 리뷰를 수행합니다. `CLAUDE_CODE_OAUTH_TOKEN` 시크릿을 GitHub 저장소에 등록해야 동작합니다.
+
+### Claude PR Assistant (`claude.yml`)
+
+이슈·PR 코멘트·리뷰에서 `@claude` 를 멘션하면 Claude Code가 지시 사항을 수행합니다. 코드 수정, PR 설명 업데이트 등 다양한 작업을 자연어로 요청할 수 있습니다.
+
+워크플로우 동작 원리는 Chapter 07 의 "GitHub Actions 연동" 레슨에서 다룹니다.
+
 ## 강의 Q&A 도우미
 
 이 저장소에는 강의 Q&A 를 도와주는 plugin (`claude-code-playbook@toy-crane`) 이 미리 등록돼 있습니다 (`.claude/settings.json` 의 `enabledPlugins` 참조). 저장소를 clone 한 뒤 Claude Code 를 실행하면 plugin 의 marketplace 와 `qna` Skill 이 자동으로 활성화됩니다. 강의 내용이 헷갈릴 때 Claude Code 입력창에 한국어로 질문하면 강의 본문을 우선 참조해 답합니다.
