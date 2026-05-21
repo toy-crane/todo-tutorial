@@ -33,7 +33,17 @@ bun run start      # 빌드 결과 실행
 bun run lint       # ESLint
 bun run typecheck  # tsc --noEmit
 bun run format     # Prettier 포맷팅
+bun run test       # Vitest 1회 실행
+bun run test:watch # Vitest watch 모드
 ```
+
+## 앱 기능
+
+- 추가 / 완료 토글 / 삭제 / 더블클릭 인라인 편집
+- localStorage 기반 상태 유지 (서버 저장·인증 없음)
+- 다크 모드 토글 (`d` 키)
+
+자세한 요구사항은 [`todo-requirements.md`](./todo-requirements.md) 를 참고하세요.
 
 ## 챕터별 시작 브랜치
 
@@ -45,7 +55,7 @@ git checkout ch02-03
 
 ## 강의 Q&A 도우미
 
-이 저장소에는 강의 Q&A 를 도와주는 plugin (`claude-code-playbook@toy-crane`) 이 미리 등록돼 있습니다 (`.claude/settings.json` 의 `enabledPlugins` 참조). 저장소를 clone 한 뒤 Claude Code 를 실행하면 plugin 의 marketplace 와 `qna` Skill 이 자동으로 활성화됩니다. 강의 내용이 헷갈릴 때 Claude Code 입력창에 한국어로 질문하면 강의 본문을 우선 참조해 답합니다.
+이 저장소에는 강의 Q&A 를 도와주는 plugin (`playbook-essentials@claude-code-playbook`) 이 미리 등록돼 있습니다 (`.claude/settings.json` 의 `enabledPlugins` 참조). 저장소를 clone 한 뒤 Claude Code 를 실행하면 plugin 의 marketplace 와 `qna` Skill 이 자동으로 활성화됩니다. 강의 내용이 헷갈릴 때 Claude Code 입력창에 한국어로 질문하면 강의 본문을 우선 참조해 답합니다.
 
 plugin·marketplace 의 동작 원리는 Chapter 06 의 "기존 Skill 가져다 쓰기" 레슨에서 다룹니다.
 
