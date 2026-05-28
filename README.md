@@ -14,7 +14,7 @@
 - Tailwind CSS v4
 - shadcn/ui (radix-maia 스타일, taupe 베이스)
 - TypeScript / ESLint / Prettier
-- 패키지 매니저: bun
+- 패키지 매니저: bun 1.3.6
 
 ## 시작하기
 
