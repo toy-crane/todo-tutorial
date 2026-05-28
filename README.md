@@ -43,9 +43,12 @@ bun run format     # Prettier 포맷팅
 git checkout ch02-03
 ```
 
-## 강의 Q&A 도우미
+## 강의용 Plugin Skill
 
-이 저장소에는 강의 Q&A 를 도와주는 plugin (`claude-code-playbook@toy-crane`) 이 미리 등록돼 있습니다 (`.claude/settings.json` 의 `enabledPlugins` 참조). 저장소를 clone 한 뒤 Claude Code 를 실행하면 plugin 의 marketplace 와 `qna` Skill 이 자동으로 활성화됩니다. 강의 내용이 헷갈릴 때 Claude Code 입력창에 한국어로 질문하면 강의 본문을 우선 참조해 답합니다.
+이 저장소에는 강의를 도와주는 plugin (`claude-code-playbook@toy-crane`) 이 미리 등록돼 있습니다 (`.claude/settings.json` 의 `enabledPlugins` 참조). 저장소를 clone 한 뒤 Claude Code 를 실행하면 plugin 의 marketplace 와 아래 Skill 들이 자동으로 활성화됩니다.
+
+- **`qna`** — 강의 내용이 헷갈릴 때 한국어로 질문하면 강의 본문(docs.claude-hunt.com) 을 먼저 참조해 답해 줍니다. "강의에서…", "Claude Code Playbook" 같은 표현이나 Claude Code·Agent SDK·Claude API 관련 한국어 질문에서 자동으로 동작합니다.
+- **`migrate-to-copilot`** — Claude Pro 토큰이 떨어져 GitHub Copilot CLI 로 갈아탈 때 `.claude/commands/` → `.claude/skills/` 변환, `.claude/agents/` → `.github/agents/` 복사, `.claude/settings.json` 의 hooks → `hooks.json` 번역을 한 번에 처리합니다.
 
 plugin·marketplace 의 동작 원리는 Chapter 06 의 "기존 Skill 가져다 쓰기" 레슨에서 다룹니다.
 
