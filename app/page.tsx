@@ -8,7 +8,7 @@ export default function Page() {
           <h1 className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
             ✨ Todo Tutorial
           </h1>
-          <p>You may now add components and start building.</p>
+          <p>오늘 하루도 차근차근, 함께 정리해 볼까요?</p>
           <p>We&apos;ve already added the button component for you.</p>
           <Button className="mt-2">Button</Button>
         </div>
