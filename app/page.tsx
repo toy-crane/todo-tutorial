@@ -6,7 +6,7 @@ export default function Page() {
       <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
         <div>
           <h1 className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
-            ✨ Todo Tutorial
+            Todo Tutorial
           </h1>
           <p>Welcome! You&apos;re all set to start building something great.</p>
           <p>We&apos;ve already added the button component for you.</p>
