@@ -13,6 +13,7 @@
 - React 19
 - Tailwind CSS v4
 - shadcn/ui (radix-maia 스타일, taupe 베이스)
+- next-themes (다크 모드)
 - TypeScript / ESLint / Prettier
 - 패키지 매니저: bun 1.3.6
 
@@ -35,12 +36,16 @@ bun run typecheck  # tsc --noEmit
 bun run format     # Prettier 포맷팅
 ```
 
+## 다크 모드
+
+`next-themes` 로 라이트/다크 테마를 지원합니다. 기본값은 시스템 설정을 따르며, 입력 중인 요소에 포커스가 없을 때 <kbd>d</kbd> 키를 누르면 테마가 토글됩니다.
+
 ## 챕터별 시작 브랜치
 
 각 레슨은 시작 시점의 코드 상태를 브랜치로 제공합니다. 레슨 본문에서 안내하는 브랜치로 전환한 뒤 따라가시면 됩니다.
 
 ```shell
-git checkout ch02-03
+git checkout ch02-02
 ```
 
 ## 컴포넌트 추가
