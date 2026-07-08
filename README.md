@@ -14,7 +14,7 @@
 - Tailwind CSS v4
 - shadcn/ui (radix-maia 스타일, taupe 베이스)
 - TypeScript / ESLint / Prettier
-- 패키지 매니저: bun 1.3.6
+- 패키지 매니저: bun (1.3.x)
 
 ## 시작하기
 
@@ -35,9 +35,17 @@ bun run typecheck  # tsc --noEmit
 bun run format     # Prettier 포맷팅
 ```
 
-## 챕터별 시작 브랜치
+## 프로젝트 구조
 
-각 레슨은 시작 시점의 코드 상태를 브랜치로 제공합니다. 레슨 본문에서 안내하는 브랜치로 전환한 뒤 따라가시면 됩니다.
+```
+app/         # App Router 엔트리 (layout, page, 전역 스타일)
+components/  # 재사용 컴포넌트 (components/ui 는 shadcn/ui 컴포넌트)
+hooks/       # 커스텀 React 훅
+lib/         # 유틸리티 함수 (cn 등)
+public/      # 정적 파일
+```
+
+현재 저장소는 강의 시작 시점의 초기 스캐폴드 상태이며, `main` 브랜치 하나만 제공합니다. 레슨이 진행되면서 각 챕터의 시작 코드가 별도 브랜치로 추가될 예정입니다. 레슨 본문에서 브랜치를 안내하면 아래와 같이 전환한 뒤 따라가시면 됩니다.
 
 ```shell
 git checkout ch02-03
