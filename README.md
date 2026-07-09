@@ -40,7 +40,7 @@ bun run format     # Prettier 포맷팅
 각 레슨은 시작 시점의 코드 상태를 브랜치로 제공합니다. 레슨 본문에서 안내하는 브랜치로 전환한 뒤 따라가시면 됩니다.
 
 ```shell
-git checkout ch02-03
+git checkout ch02-02
 ```
 
 ## 컴포넌트 추가
@@ -58,3 +58,7 @@ bunx --bun shadcn@latest add button
 ```tsx
 import { Button } from "@/components/ui/button";
 ```
+
+## 다크 모드
+
+`next-themes` 기반으로 라이트/다크/시스템 테마를 지원합니다. 입력 필드에 포커스가 없는 상태에서 `d` 키를 누르면 라이트/다크 테마가 토글됩니다.
