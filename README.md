@@ -2,6 +2,8 @@
 
 [Claude Code Playbook](https://docs.claude-hunt.com) 강의의 실습용 저장소입니다. Next.js 와 shadcn/ui 로 시작하는 작은 Todo 앱을 단계별로 발전시키며 Claude Code 사용법을 익힙니다.
 
+각 챕터는 시작 시점의 코드 상태를 별도 브랜치로 제공하며, 레슨을 따라가며 브랜치를 전환해 기능이 하나씩 추가되는 과정을 직접 체험할 수 있습니다.
+
 ## 관련 링크
 
 - 강의 본문: https://docs.claude-hunt.com
@@ -18,8 +20,15 @@
 
 ## 시작하기
 
+의존성을 설치합니다.
+
 ```bash
 bun install
+```
+
+개발 서버를 실행합니다.
+
+```bash
 bun dev
 ```
 
