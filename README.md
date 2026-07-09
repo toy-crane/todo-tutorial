@@ -1,6 +1,6 @@
 # Todo Tutorial
 
-[Claude Code Playbook](https://docs.claude-hunt.com) 강의의 실습용 저장소입니다. Next.js 와 shadcn/ui 로 시작하는 작은 Todo 앱을 단계별로 발전시키며 Claude Code 사용법을 익힙니다.
+[Claude Code Playbook](https://docs.claude-hunt.com) 강의의 실습용 저장소입니다. Next.js 와 shadcn/ui 로 시작하는 작은 Todo 앱을 단계별로 발전시키며 Claude Code 사용법을 익힙니다. 각 챕터는 시작 시점의 코드 상태를 브랜치(`chNN-NN`)로 제공하며, 레슨을 따라 커밋을 쌓아가는 방식으로 진행합니다. 완성된 앱은 항목 추가·완료 처리·삭제 등 기본적인 Todo 관리 기능을 제공하는 단일 페이지 애플리케이션입니다.
 
 ## 관련 링크
 
