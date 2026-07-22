@@ -14,7 +14,7 @@
 - Tailwind CSS v4
 - shadcn/ui (radix-maia 스타일, taupe 베이스)
 - TypeScript / ESLint / Prettier
-- 패키지 매니저: bun 1.3.6
+- 패키지 매니저: bun 1.3.11
 
 ## 시작하기
 
@@ -40,7 +40,7 @@ bun run format     # Prettier 포맷팅
 각 레슨은 시작 시점의 코드 상태를 브랜치로 제공합니다. 레슨 본문에서 안내하는 브랜치로 전환한 뒤 따라가시면 됩니다.
 
 ```shell
-git checkout ch02-03
+git checkout ch02-02
 ```
 
 ## 컴포넌트 추가
