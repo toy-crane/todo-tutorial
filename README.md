@@ -1,5 +1,7 @@
 # Todo Tutorial
 
+## 프로젝트 개요
+
 [Claude Code Playbook](https://docs.claude-hunt.com) 강의의 실습용 저장소입니다. Next.js 와 shadcn/ui 로 시작하는 작은 Todo 앱을 단계별로 발전시키며 Claude Code 사용법을 익힙니다.
 
 ## 관련 링크
@@ -16,7 +18,7 @@
 - TypeScript / ESLint / Prettier
 - 패키지 매니저: bun 1.3.6
 
-## 시작하기
+## 실행 방법
 
 ```bash
 bun install
