@@ -1,20 +1,23 @@
-import { Button } from "@/components/ui/button"
+import { TodoList } from "@/components/todo-list"
+import { AuroraText } from "@/components/ui/aurora-text"
 
 export default function Page() {
+  const title = (
+    <h1 className="text-3xl font-bold tracking-tight">
+      ✨ <AuroraText>Todo</AuroraText>
+    </h1>
+  )
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
+    <div className="flex min-h-svh justify-center p-6">
+      <div className="flex w-full max-w-md min-w-0 flex-col gap-6">
         <div>
-          <h1 className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
-            ✨ Todo Tutorial
-          </h1>
-          <p>Welcome! You&apos;re all set to start building something great.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+          {title}
+          <p className="font-mono text-xs text-muted-foreground">
+            (Press <kbd>d</kbd> to toggle dark mode)
+          </p>
         </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
+        <TodoList />
       </div>
     </div>
   )
