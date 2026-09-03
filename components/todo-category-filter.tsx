@@ -1,7 +1,7 @@
 "use client";
 
 import { CATEGORY_FILTERS, type CategoryFilter } from "@/lib/types";
-import { Button } from "@/components/ui/button";
+import { TodoOptionGroup } from "@/components/todo-option-group";
 
 interface TodoCategoryFilterProps {
   value: CategoryFilter;
@@ -13,23 +13,11 @@ export function TodoCategoryFilter({
   onChange,
 }: TodoCategoryFilterProps) {
   return (
-    <div role="radiogroup" aria-label="카테고리 필터" className="flex gap-1">
-      {CATEGORY_FILTERS.map((item) => {
-        const selected = item.value === value;
-        return (
-          <Button
-            key={item.value}
-            type="button"
-            size="sm"
-            variant={selected ? "default" : "outline"}
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(item.value)}
-          >
-            {item.label}
-          </Button>
-        );
-      })}
-    </div>
+    <TodoOptionGroup
+      ariaLabel="카테고리 필터"
+      options={CATEGORY_FILTERS}
+      value={value}
+      onChange={onChange}
+    />
   );
 }

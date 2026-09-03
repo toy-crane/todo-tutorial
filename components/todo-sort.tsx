@@ -1,7 +1,7 @@
 "use client";
 
 import { SORT_OPTIONS, type SortBy } from "@/lib/types";
-import { Button } from "@/components/ui/button";
+import { TodoOptionGroup } from "@/components/todo-option-group";
 
 interface TodoSortProps {
   value: SortBy;
@@ -10,23 +10,11 @@ interface TodoSortProps {
 
 export function TodoSort({ value, onChange }: TodoSortProps) {
   return (
-    <div role="radiogroup" aria-label="정렬" className="flex gap-1">
-      {SORT_OPTIONS.map((item) => {
-        const selected = item.value === value;
-        return (
-          <Button
-            key={item.value}
-            type="button"
-            size="sm"
-            variant={selected ? "default" : "outline"}
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(item.value)}
-          >
-            {item.label}
-          </Button>
-        );
-      })}
-    </div>
+    <TodoOptionGroup
+      ariaLabel="정렬"
+      options={SORT_OPTIONS}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
