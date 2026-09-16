@@ -50,7 +50,7 @@ export function TodoList() {
 
       {loaded && visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
-          아직 할 일이 없습니다. 위에 입력해 추가해보세요.
+          아직 할일이 없습니다
         </p>
       ) : (
         <ul className="flex flex-col gap-2">

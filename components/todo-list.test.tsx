@@ -57,14 +57,14 @@ describe("TodoList 검증 체크리스트", () => {
 
     // 로드 완료 후 빈 상태 메시지가 나타나는지 먼저 확인
     expect(
-      await screen.findByText(/아직 할 일이 없습니다/)
+      await screen.findByText(/아직 할일이 없습니다/)
     ).toBeInTheDocument();
 
     const input = screen.getByRole("textbox", { name: "새 할 일" });
     await user.type(input, "{Enter}");
 
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
-    expect(screen.getByText(/아직 할 일이 없습니다/)).toBeInTheDocument();
+    expect(screen.getByText(/아직 할일이 없습니다/)).toBeInTheDocument();
   });
 
   it("3. 체크박스 클릭 → 완료 표시(취소선)", async () => {
@@ -92,7 +92,7 @@ describe("TodoList 검증 체크리스트", () => {
 
     expect(screen.queryByText("장보기")).not.toBeInTheDocument();
     expect(
-      await screen.findByText(/아직 할 일이 없습니다/)
+      await screen.findByText(/아직 할일이 없습니다/)
     ).toBeInTheDocument();
   });
 
@@ -178,18 +178,18 @@ describe("Todo 필터링", () => {
     }
   });
 
-  it("Todo 0개일 때 '진행중' 선택 → '할 일이 없습니다' 메시지 표시", async () => {
+  it("Todo 0개일 때 '진행중' 선택 → '할일이 없습니다' 메시지 표시", async () => {
     const user = userEvent.setup();
     render(<TodoList />);
-    await screen.findByText(/할 일이 없습니다/);
+    await screen.findByText(/할일이 없습니다/);
 
     await user.click(screen.getByRole("radio", { name: "진행중" }));
 
-    expect(screen.getByText(/할 일이 없습니다/)).toBeInTheDocument();
+    expect(screen.getByText(/할일이 없습니다/)).toBeInTheDocument();
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
   });
 
-  it("항목이 있어도 필터 결과가 비면 '할 일이 없습니다' 메시지 표시", async () => {
+  it("항목이 있어도 필터 결과가 비면 '할일이 없습니다' 메시지 표시", async () => {
     const user = userEvent.setup();
     render(<TodoList />);
     // 미완료 항목만 추가한 뒤 '완료' 필터 → 결과 0개
@@ -198,7 +198,7 @@ describe("Todo 필터링", () => {
 
     await user.click(screen.getByRole("radio", { name: "완료" }));
 
-    expect(screen.getByText(/할 일이 없습니다/)).toBeInTheDocument();
+    expect(screen.getByText(/할일이 없습니다/)).toBeInTheDocument();
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
   });
 
