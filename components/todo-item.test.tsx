@@ -209,3 +209,53 @@ describe("TodoItem 편집 - IME 조합 중 Enter", () => {
     expect(onEdit).toHaveBeenCalledExactlyOnceWith("1", "수정완료");
   });
 });
+
+describe("TodoItem 편집 - 키보드 접근", () => {
+  function renderItem(onEdit = vi.fn()) {
+    render(
+      <TodoItem
+        todo={makeTodo()}
+        onToggle={vi.fn()}
+        onDelete={vi.fn()}
+        onEdit={onEdit}
+      />
+    );
+    return onEdit;
+  }
+
+  it("텍스트는 Tab으로 포커스할 수 있고 스크린리더용 이름을 가진다", async () => {
+    const user = userEvent.setup();
+    renderItem();
+
+    await user.tab(); // 체크박스
+    await user.tab(); // 할 일 텍스트
+
+    expect(
+      screen.getByRole("button", { name: "편집: 테스트 할 일" })
+    ).toHaveFocus();
+  });
+
+  it.each(["{Enter}", "{F2}"])("텍스트에 포커스한 뒤 %s로 편집을 시작한다", async (key) => {
+    const user = userEvent.setup();
+    renderItem();
+
+    screen.getByRole("button", { name: "편집: 테스트 할 일" }).focus();
+    await user.keyboard(key);
+
+    expect(screen.getByRole("textbox", { name: "할 일 편집" })).toHaveFocus();
+  });
+
+  it("키보드로 편집을 끝내면 포커스가 텍스트로 돌아온다", async () => {
+    const user = userEvent.setup();
+    const onEdit = renderItem();
+
+    screen.getByRole("button", { name: "편집: 테스트 할 일" }).focus();
+    await user.keyboard("{Enter}");
+    await user.keyboard("{Escape}");
+
+    expect(onEdit).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: "편집: 테스트 할 일" })
+    ).toHaveFocus();
+  });
+});
