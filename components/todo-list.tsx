@@ -15,6 +15,26 @@ import { TodoSort } from "@/components/todo-sort";
 import { TodoSearch } from "@/components/todo-search";
 import { TodoItem } from "@/components/todo-item";
 
+function FilterRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="w-16 shrink-0 text-xs text-muted-foreground"
+      >
+        {label}
+      </span>
+      {children}
+    </div>
+  );
+}
+
 export function TodoList() {
   const { todos, loaded, addTodo, toggleTodo, deleteTodo, editTodo } =
     useTodos();
@@ -41,12 +61,20 @@ export function TodoList() {
 
       <TodoSearch value={query} onChange={setQuery} />
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <TodoFilter value={filter} onChange={setFilter} />
-        <TodoSort value={sortBy} onChange={setSortBy} />
+      <div className="flex flex-col gap-3 border border-border p-3">
+        <FilterRow label="상태">
+          <TodoFilter value={filter} onChange={setFilter} />
+        </FilterRow>
+        <FilterRow label="카테고리">
+          <TodoCategoryFilter
+            value={categoryFilter}
+            onChange={setCategoryFilter}
+          />
+        </FilterRow>
+        <FilterRow label="정렬">
+          <TodoSort value={sortBy} onChange={setSortBy} />
+        </FilterRow>
       </div>
-
-      <TodoCategoryFilter value={categoryFilter} onChange={setCategoryFilter} />
 
       {loaded && visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
