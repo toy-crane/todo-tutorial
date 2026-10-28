@@ -141,6 +141,24 @@ describe("TodoItem", () => {
     expect(screen.queryByText("개인")).not.toBeInTheDocument();
     expect(screen.queryByText("쇼핑")).not.toBeInTheDocument();
   });
+
+  it("공백 없는 긴 텍스트도 줄 안에서 줄바꿈되어 행 폭을 넘지 않는다", () => {
+    // jsdom은 레이아웃을 계산하지 않으므로 축소·줄바꿈 클래스로 검증한다.
+    // flex 자식은 min-w-0이 없으면 내용 폭 아래로 줄어들지 않는다.
+    const longText = "https://example.com/" + "a".repeat(300);
+    render(
+      <TodoItem
+        todo={makeTodo({ text: longText })}
+        onToggle={vi.fn()}
+        onDelete={vi.fn()}
+        onEdit={vi.fn()}
+      />
+    );
+
+    const text = screen.getByText(longText);
+    expect(text).toHaveClass("min-w-0");
+    expect(text).toHaveClass("[overflow-wrap:anywhere]");
+  });
 });
 
 describe("TodoItem 편집 - IME 조합 중 Enter", () => {

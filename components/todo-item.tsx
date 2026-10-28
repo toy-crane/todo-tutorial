@@ -84,7 +84,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
         <span
           onDoubleClick={startEditing}
           className={cn(
-            "flex-1 cursor-pointer break-words",
+            "min-w-0 flex-1 cursor-pointer [overflow-wrap:anywhere]",
             todo.completed && "text-muted-foreground line-through"
           )}
         >
