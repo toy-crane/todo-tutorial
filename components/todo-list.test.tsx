@@ -393,3 +393,38 @@ describe("Todo 카테고리별 필터", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 });
+
+describe("결과 0건 안내 문구", () => {
+  it("할 일이 있지만 검색 결과가 0건이면 조건 불일치 문구를 보여준다", async () => {
+    const user = userEvent.setup();
+    render(<TodoList />);
+    await addTodo(user, "장보기");
+    await screen.findByText("장보기");
+
+    await user.type(screen.getByRole("searchbox", { name: "검색" }), "없는검색어");
+
+    expect(screen.getByText("조건에 맞는 할 일이 없습니다.")).toBeInTheDocument();
+    expect(screen.queryByText(/아직 할 일이 없습니다/)).not.toBeInTheDocument();
+  });
+
+  it("할 일이 있지만 필터 결과가 0건이면 조건 불일치 문구를 보여준다", async () => {
+    const user = userEvent.setup();
+    render(<TodoList />);
+    await addTodo(user, "장보기");
+    await screen.findByText("장보기");
+
+    await user.click(screen.getByRole("radio", { name: "완료" }));
+
+    expect(screen.getByText("조건에 맞는 할 일이 없습니다.")).toBeInTheDocument();
+    expect(screen.queryByText(/아직 할 일이 없습니다/)).not.toBeInTheDocument();
+  });
+
+  it("할 일이 하나도 없으면 추가를 안내하는 문구를 보여준다", async () => {
+    render(<TodoList />);
+
+    expect(
+      await screen.findByText("아직 할 일이 없습니다. 위에 입력해 추가해보세요.")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("조건에 맞는 할 일이 없습니다.")).not.toBeInTheDocument();
+  });
+});

@@ -141,6 +141,24 @@ describe("TodoItem", () => {
     expect(screen.queryByText("개인")).not.toBeInTheDocument();
     expect(screen.queryByText("쇼핑")).not.toBeInTheDocument();
   });
+
+  it("공백 없는 긴 텍스트도 줄 안에서 줄바꿈되어 행 폭을 넘지 않는다", () => {
+    // jsdom은 레이아웃을 계산하지 않으므로 축소·줄바꿈 클래스로 검증한다.
+    // flex 자식은 min-w-0이 없으면 내용 폭 아래로 줄어들지 않는다.
+    const longText = "https://example.com/" + "a".repeat(300);
+    render(
+      <TodoItem
+        todo={makeTodo({ text: longText })}
+        onToggle={vi.fn()}
+        onDelete={vi.fn()}
+        onEdit={vi.fn()}
+      />
+    );
+
+    const text = screen.getByText(longText);
+    expect(text).toHaveClass("min-w-0");
+    expect(text).toHaveClass("[overflow-wrap:anywhere]");
+  });
 });
 
 describe("TodoItem 편집 - IME 조합 중 Enter", () => {
@@ -189,5 +207,55 @@ describe("TodoItem 편집 - IME 조합 중 Enter", () => {
     fireEvent.keyDown(input, { key: "Enter" });
 
     expect(onEdit).toHaveBeenCalledExactlyOnceWith("1", "수정완료");
+  });
+});
+
+describe("TodoItem 편집 - 키보드 접근", () => {
+  function renderItem(onEdit = vi.fn()) {
+    render(
+      <TodoItem
+        todo={makeTodo()}
+        onToggle={vi.fn()}
+        onDelete={vi.fn()}
+        onEdit={onEdit}
+      />
+    );
+    return onEdit;
+  }
+
+  it("텍스트는 Tab으로 포커스할 수 있고 스크린리더용 이름을 가진다", async () => {
+    const user = userEvent.setup();
+    renderItem();
+
+    await user.tab(); // 체크박스
+    await user.tab(); // 할 일 텍스트
+
+    expect(
+      screen.getByRole("button", { name: "편집: 테스트 할 일" })
+    ).toHaveFocus();
+  });
+
+  it.each(["{Enter}", "{F2}"])("텍스트에 포커스한 뒤 %s로 편집을 시작한다", async (key) => {
+    const user = userEvent.setup();
+    renderItem();
+
+    screen.getByRole("button", { name: "편집: 테스트 할 일" }).focus();
+    await user.keyboard(key);
+
+    expect(screen.getByRole("textbox", { name: "할 일 편집" })).toHaveFocus();
+  });
+
+  it("키보드로 편집을 끝내면 포커스가 텍스트로 돌아온다", async () => {
+    const user = userEvent.setup();
+    const onEdit = renderItem();
+
+    screen.getByRole("button", { name: "편집: 테스트 할 일" }).focus();
+    await user.keyboard("{Enter}");
+    await user.keyboard("{Escape}");
+
+    expect(onEdit).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: "편집: 테스트 할 일" })
+    ).toHaveFocus();
   });
 });

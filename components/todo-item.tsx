@@ -24,11 +24,17 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(todo.text);
   const inputRef = useRef<HTMLInputElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  // 키보드(Enter/Escape)로 편집을 끝냈는지 여부 — 이때만 포커스를 텍스트로 되돌린다.
+  const restoreFocusRef = useRef(false);
 
   useEffect(() => {
     if (editing) {
       inputRef.current?.focus();
       inputRef.current?.select();
+    } else if (restoreFocusRef.current) {
+      restoreFocusRef.current = false;
+      textRef.current?.focus();
     }
   }, [editing]);
 
@@ -52,10 +58,20 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
     if (event.nativeEvent.isComposing) return;
     if (event.key === "Enter") {
       event.preventDefault();
+      restoreFocusRef.current = true;
       commit();
     } else if (event.key === "Escape") {
       event.preventDefault();
+      restoreFocusRef.current = true;
       cancel();
+    }
+  }
+
+  // 마우스 더블클릭과 같은 편집 진입을 키보드에서도 제공한다.
+  function handleTextKeyDown(event: React.KeyboardEvent<HTMLSpanElement>) {
+    if (event.key === "Enter" || event.key === " " || event.key === "F2") {
+      event.preventDefault();
+      startEditing();
     }
   }
 
@@ -82,9 +98,14 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
         />
       ) : (
         <span
+          ref={textRef}
+          role="button"
+          tabIndex={0}
+          aria-label={`편집: ${todo.text}`}
           onDoubleClick={startEditing}
+          onKeyDown={handleTextKeyDown}
           className={cn(
-            "flex-1 cursor-pointer break-words",
+            "min-w-0 flex-1 cursor-pointer rounded-sm outline-none [overflow-wrap:anywhere] focus-visible:ring-2 focus-visible:ring-ring/30",
             todo.completed && "text-muted-foreground line-through"
           )}
         >
