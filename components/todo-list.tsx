@@ -50,7 +50,10 @@ export function TodoList() {
 
       {loaded && visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
-          아직 할 일이 없습니다. 위에 입력해 추가해보세요.
+          {/* 할 일이 있는데 0건이면 필터·검색 조건 때문이다. */}
+          {todos.length === 0
+            ? "아직 할 일이 없습니다. 위에 입력해 추가해보세요."
+            : "조건에 맞는 할 일이 없습니다."}
         </p>
       ) : (
         <ul className="flex flex-col gap-2">
