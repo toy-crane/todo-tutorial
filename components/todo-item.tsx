@@ -13,6 +13,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+// 카테고리·우선순위 뱃지가 공유하는 기본 스타일. 색상은 각 meta의 badgeClass로 덧입힌다.
+const BADGE_CLASS =
+  "shrink-0 rounded-full border px-2 py-0.5 text-[0.625rem] font-medium leading-none";
+
 interface TodoItemProps {
   todo: Todo;
   onToggle: (id: string) => void;
@@ -100,20 +104,14 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
 
       {category && (
         <span
-          className={cn(
-            "shrink-0 rounded-full border px-2 py-0.5 text-[0.625rem] font-medium leading-none",
-            category.badgeClass
-          )}
+          className={cn(BADGE_CLASS, category.badgeClass)}
         >
           {category.label}
         </span>
       )}
 
       <span
-        className={cn(
-          "shrink-0 rounded-full border px-2 py-0.5 text-[0.625rem] font-medium leading-none",
-          priority.badgeClass
-        )}
+        className={cn(BADGE_CLASS, priority.badgeClass)}
       >
         {priority.label}
       </span>
