@@ -1,16 +1,5 @@
-import type { Todo } from "@/lib/types";
 import { matchesSearch, sortTodos } from "@/lib/todo-utils";
-
-function makeTodo(overrides: Partial<Todo> = {}): Todo {
-  return {
-    id: "1",
-    text: "할 일",
-    completed: false,
-    priority: "medium",
-    createdAt: 0,
-    ...overrides,
-  };
-}
+import { makeTodo } from "@/lib/test-factories";
 
 describe("sortTodos", () => {
   it("'created'는 생성 시각 내림차순(최신순)으로 정렬한다", () => {

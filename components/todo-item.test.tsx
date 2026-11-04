@@ -1,18 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Todo } from "@/lib/types";
+import { makeTodo } from "@/lib/test-factories";
 import { TodoItem } from "@/components/todo-item";
-
-function makeTodo(overrides: Partial<Todo> = {}): Todo {
-  return {
-    id: "1",
-    text: "테스트 할 일",
-    completed: false,
-    priority: "medium",
-    createdAt: 0,
-    ...overrides,
-  };
-}
 
 describe("TodoItem", () => {
   it("할 일 텍스트를 렌더링한다", () => {
