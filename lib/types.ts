@@ -15,12 +15,15 @@ export interface Todo {
 
 export const DEFAULT_PRIORITY: Priority = "medium";
 
-export interface PriorityMeta {
-  value: Priority;
+// 우선순위·카테고리처럼 뱃지로 표시하는 값의 메타 정보.
+interface BadgeMeta<T extends string> {
+  value: T;
   label: string;
   /** 목록 뱃지에 적용할 Tailwind 색상 클래스 */
   badgeClass: string;
 }
+
+export type PriorityMeta = BadgeMeta<Priority>;
 
 // 우선순위 목록(높음 → 낮음 순). 선택 UI와 뱃지가 공유한다.
 export const PRIORITIES: PriorityMeta[] = [
@@ -48,12 +51,7 @@ export const PRIORITY_META: Record<Priority, PriorityMeta> = Object.fromEntries(
 
 export type Category = "work" | "personal" | "shopping";
 
-export interface CategoryMeta {
-  value: Category;
-  label: string;
-  /** 목록 뱃지에 적용할 Tailwind 색상 클래스 */
-  badgeClass: string;
-}
+export type CategoryMeta = BadgeMeta<Category>;
 
 // 카테고리 목록. 선택 UI와 뱃지, 필터가 공유한다.
 export const CATEGORIES: CategoryMeta[] = [
