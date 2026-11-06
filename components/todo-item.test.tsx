@@ -191,3 +191,33 @@ describe("TodoItem 편집 - IME 조합 중 Enter", () => {
     expect(onEdit).toHaveBeenCalledExactlyOnceWith("1", "수정완료");
   });
 });
+
+describe("TodoItem 편집 - Escape 취소", () => {
+  it("Escape로 취소하면 커밋하지 않고, 다시 편집하면 원래 텍스트로 시작한다", async () => {
+    const user = userEvent.setup();
+    const onEdit = vi.fn();
+    render(
+      <TodoItem
+        todo={makeTodo()}
+        onToggle={vi.fn()}
+        onDelete={vi.fn()}
+        onEdit={onEdit}
+      />
+    );
+
+    await user.dblClick(screen.getByText("테스트 할 일"));
+    const input = screen.getByRole("textbox", { name: "할 일 편집" });
+    fireEvent.change(input, { target: { value: "버릴 수정" } });
+    fireEvent.keyDown(input, { key: "Escape" });
+
+    expect(onEdit).not.toHaveBeenCalled();
+    expect(
+      screen.queryByRole("textbox", { name: "할 일 편집" })
+    ).not.toBeInTheDocument();
+
+    await user.dblClick(screen.getByText("테스트 할 일"));
+    expect(screen.getByRole("textbox", { name: "할 일 편집" })).toHaveValue(
+      "테스트 할 일"
+    );
+  });
+});

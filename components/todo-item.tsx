@@ -43,8 +43,8 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }: TodoItemProps) {
   }
 
   function cancel() {
+    // draft는 startEditing()에서 매번 원래 텍스트로 초기화되므로 여기서 되돌릴 필요가 없다.
     setEditing(false);
-    setDraft(todo.text);
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
