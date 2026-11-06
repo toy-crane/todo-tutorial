@@ -35,12 +35,12 @@ bun run typecheck  # tsc --noEmit
 bun run format     # Prettier 포맷팅
 ```
 
-## 챕터별 시작 브랜치
+## 레슨별 시작 브랜치
 
-각 레슨은 시작 시점의 코드 상태를 브랜치로 제공합니다. 레슨 본문에서 안내하는 브랜치로 전환한 뒤 따라가시면 됩니다.
+레슨마다 시작 시점의 코드를 `lesson/<레슨 이름>` 브랜치로 제공합니다. 레슨 본문이 안내하는 브랜치로 바꾼 뒤 따라가세요.
 
 ```shell
-git checkout ch02-03
+git checkout lesson/claude-md
 ```
 
 ## 컴포넌트 추가
