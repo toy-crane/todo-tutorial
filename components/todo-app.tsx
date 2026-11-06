@@ -9,9 +9,26 @@ import { Input } from "@/components/ui/input"
 import { useTodos, type Todo } from "@/hooks/use-todos"
 import { cn } from "@/lib/utils"
 
+type Filter = "all" | "active" | "completed"
+
+const FILTERS: { value: Filter; label: string }[] = [
+  { value: "all", label: "전체" },
+  { value: "active", label: "진행중" },
+  { value: "completed", label: "완료" },
+]
+
 export function TodoApp() {
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo } = useTodos()
   const [draft, setDraft] = useState("")
+  const [filter, setFilter] = useState<Filter>("all")
+
+  const visibleTodos = todos.filter((todo) =>
+    filter === "all"
+      ? true
+      : filter === "active"
+        ? !todo.completed
+        : todo.completed
+  )
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // 한글 조합 중 Enter는 무시 (중복 추가 방지)
@@ -20,6 +37,8 @@ export function TodoApp() {
     if (!text) return
     addTodo(text)
     setDraft("")
+    // 새 항목이 필터에 가려지지 않도록 전체 보기로 돌아간다
+    setFilter("all")
   }
 
   return (
@@ -32,13 +51,28 @@ export function TodoApp() {
         aria-label="새 할 일"
         autoFocus
       />
-      {todos.length === 0 ? (
+      <div role="group" aria-label="필터" className="flex gap-1">
+        {FILTERS.map(({ value, label }) => (
+          <Button
+            key={value}
+            variant={filter === value ? "secondary" : "ghost"}
+            size="sm"
+            aria-pressed={filter === value}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </Button>
+        ))}
+      </div>
+      {visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
-          할 일이 없습니다
+          {todos.length === 0
+            ? "할 일이 없습니다"
+            : "해당하는 할 일이 없습니다"}
         </p>
       ) : (
         <ul className="flex flex-col gap-1">
-          {todos.map((todo) => (
+          {visibleTodos.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}
