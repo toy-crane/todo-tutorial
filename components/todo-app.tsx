@@ -129,7 +129,7 @@ function TodoItem({
   }
 
   return (
-    <li className="group flex min-h-11 items-center gap-3 rounded-lg px-2 hover:bg-muted/50">
+    <li className="group flex min-h-11 items-center gap-3 overflow-hidden rounded-lg px-2 hover:bg-muted/50">
       <Checkbox
         checked={todo.completed}
         onCheckedChange={onToggle}
@@ -149,7 +149,7 @@ function TodoItem({
         <span
           onDoubleClick={startEdit}
           className={cn(
-            "flex-1 cursor-text py-2 text-sm break-all select-none",
+            "flex-1 cursor-text py-2 text-sm whitespace-nowrap select-none",
             todo.completed && "text-muted-foreground line-through"
           )}
         >
