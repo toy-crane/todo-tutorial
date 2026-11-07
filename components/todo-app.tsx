@@ -94,8 +94,15 @@ export function TodoApp() {
     setCategoryView("all")
   }
 
+  const canSave = typeof window !== "undefined" && "localStorage" in window
+
   return (
     <div className="flex flex-col gap-4">
+      <p className="text-xs text-muted-foreground">
+        {canSave
+          ? "할 일은 이 브라우저에 저장됩니다"
+          : "이 브라우저에서는 할 일이 저장되지 않습니다"}
+      </p>
       <div className="flex flex-col gap-2 sm:flex-row">
         <Input
           value={draft}
