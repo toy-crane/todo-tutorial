@@ -52,7 +52,8 @@ const COMPARE: Record<Sort, (a: Todo, b: Todo) => number> = {
 }
 
 export function TodoApp() {
-  const { todos, addTodo, toggleTodo, deleteTodo, editTodo } = useTodos()
+  const { todos, addTodo, toggleTodo, deleteTodo, editTodo, clearCompleted } =
+    useTodos()
   const [draft, setDraft] = useState("")
   const [dueDate, setDueDate] = useState("")
   const [category, setCategory] = useState<Category | "">("")
@@ -61,6 +62,7 @@ export function TodoApp() {
   const [query, setQuery] = useState("")
   const [categoryView, setCategoryView] = useState<Category | "all">("all")
 
+  const completedCount = todos.filter((todo) => todo.completed).length
   const keyword = query.trim().toLowerCase()
   const visibleTodos = todos
     .filter((todo) =>
@@ -160,18 +162,30 @@ export function TodoApp() {
           ))}
         </NativeSelect>
       </div>
-      <div role="group" aria-label="정렬" className="flex gap-1">
-        {SORTS.map(({ value, label }) => (
-          <Button
-            key={value}
-            variant={sort === value ? "secondary" : "ghost"}
-            size="sm"
-            aria-pressed={sort === value}
-            onClick={() => setSort(value)}
-          >
-            {label}
-          </Button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div role="group" aria-label="정렬" className="flex gap-1">
+          {SORTS.map(({ value, label }) => (
+            <Button
+              key={value}
+              variant={sort === value ? "secondary" : "ghost"}
+              size="sm"
+              aria-pressed={sort === value}
+              onClick={() => setSort(value)}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+        {/* 필터·검색과 상관없이 완료한 항목 전체를 지운다 */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={clearCompleted}
+          disabled={completedCount === 0}
+          className="text-muted-foreground hover:text-destructive"
+        >
+          완료 항목 지우기 ({completedCount})
+        </Button>
       </div>
       {visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">

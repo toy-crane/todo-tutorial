@@ -100,5 +100,10 @@ export function useTodos() {
     [update]
   )
 
-  return { todos, addTodo, toggleTodo, deleteTodo, editTodo }
+  const clearCompleted = useCallback(
+    () => update((prev) => prev.filter((t) => !t.completed)),
+    [update]
+  )
+
+  return { todos, addTodo, toggleTodo, deleteTodo, editTodo, clearCompleted }
 }
