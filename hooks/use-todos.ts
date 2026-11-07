@@ -2,10 +2,22 @@
 
 import { useCallback, useSyncExternalStore } from "react"
 
+export type Category = "work" | "personal" | "shopping"
+
 export type Todo = {
   id: string
   text: string
   completed: boolean
+  /** 생성 시각(ms). 예전 데이터에는 없을 수 있다 */
+  createdAt?: number
+  /** YYYY-MM-DD */
+  dueDate?: string
+  category?: Category
+}
+
+export type NewTodoOptions = {
+  dueDate?: string
+  category?: Category
 }
 
 const STORAGE_KEY = "todos"
@@ -54,9 +66,16 @@ export function useTodos() {
   }, [])
 
   const addTodo = useCallback(
-    (text: string) =>
+    (text: string, { dueDate, category }: NewTodoOptions = {}) =>
       update((prev) => [
-        { id: crypto.randomUUID(), text, completed: false },
+        {
+          id: crypto.randomUUID(),
+          text,
+          completed: false,
+          createdAt: Date.now(),
+          ...(dueDate && { dueDate }),
+          ...(category && { category }),
+        },
         ...prev,
       ]),
     [update]
