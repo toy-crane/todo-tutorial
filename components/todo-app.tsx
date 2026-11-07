@@ -6,6 +6,7 @@ import { Trash2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { useTodos, type Category, type Todo } from "@/hooks/use-todos"
 import { cn } from "@/lib/utils"
 
@@ -33,9 +34,6 @@ const CATEGORIES: { value: Category; label: string }[] = [
 const CATEGORY_LABEL = Object.fromEntries(
   CATEGORIES.map(({ value, label }) => [value, label])
 ) as Record<Category, string>
-
-const SELECT_CLASS =
-  "h-9 rounded-md border border-input bg-transparent px-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
 
 // 정렬 비교 함수. 0을 돌려주면 저장된 순서(최근 추가가 위)를 유지한다
 const COMPARE: Record<Sort, (a: Todo, b: Todo) => number> = {
@@ -114,19 +112,18 @@ export function TodoApp() {
             aria-label="마감일"
             className="w-auto"
           />
-          <select
+          <NativeSelect
             value={category}
             onChange={(e) => setCategory(e.target.value as Category | "")}
             aria-label="카테고리"
-            className={SELECT_CLASS}
           >
-            <option value="">카테고리 없음</option>
+            <NativeSelectOption value="">카테고리 없음</NativeSelectOption>
             {CATEGORIES.map(({ value, label }) => (
-              <option key={value} value={value}>
+              <NativeSelectOption key={value} value={value}>
                 {label}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
+          </NativeSelect>
         </div>
       </div>
       <Input
@@ -150,19 +147,18 @@ export function TodoApp() {
             </Button>
           ))}
         </div>
-        <select
+        <NativeSelect
           value={categoryView}
           onChange={(e) => setCategoryView(e.target.value as Category | "all")}
           aria-label="카테고리 보기"
-          className={SELECT_CLASS}
         >
-          <option value="all">전체</option>
+          <NativeSelectOption value="all">전체</NativeSelectOption>
           {CATEGORIES.map(({ value, label }) => (
-            <option key={value} value={value}>
+            <NativeSelectOption key={value} value={value}>
               {label}
-            </option>
+            </NativeSelectOption>
           ))}
-        </select>
+        </NativeSelect>
       </div>
       <div role="group" aria-label="정렬" className="flex gap-1">
         {SORTS.map(({ value, label }) => (
