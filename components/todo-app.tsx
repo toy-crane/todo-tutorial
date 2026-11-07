@@ -43,26 +43,31 @@ export function TodoApp() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Input
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="할 일을 입력하고 Enter"
-        aria-label="새 할 일"
-        autoFocus
-      />
-      <div role="group" aria-label="필터" className="flex gap-1">
-        {FILTERS.map(({ value, label }) => (
-          <Button
-            key={value}
-            variant={filter === value ? "secondary" : "ghost"}
-            size="sm"
-            aria-pressed={filter === value}
-            onClick={() => setFilter(value)}
-          >
-            {label}
-          </Button>
-        ))}
+      <div className="fixed inset-x-0 top-0 z-10 border-b bg-background">
+        <div className="mx-auto flex w-full max-w-md flex-col gap-4 p-6">
+          <h1 className="text-3xl font-bold tracking-tight">Todo</h1>
+          <Input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="할 일을 입력하고 Enter"
+            aria-label="새 할 일"
+            autoFocus
+          />
+          <div role="group" aria-label="필터" className="flex gap-1">
+            {FILTERS.map(({ value, label }) => (
+              <Button
+                key={value}
+                variant={filter === value ? "secondary" : "ghost"}
+                size="sm"
+                aria-pressed={filter === value}
+                onClick={() => setFilter(value)}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
       {visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
@@ -129,7 +134,7 @@ function TodoItem({
   }
 
   return (
-    <li className="group flex min-h-11 items-center gap-3 overflow-hidden rounded-lg px-2 hover:bg-muted/50">
+    <li className="group flex min-h-11 items-center gap-3 rounded-lg px-2 hover:bg-muted/50">
       <Checkbox
         checked={todo.completed}
         onCheckedChange={onToggle}
@@ -149,7 +154,7 @@ function TodoItem({
         <span
           onDoubleClick={startEdit}
           className={cn(
-            "flex-1 cursor-text py-2 text-sm whitespace-nowrap select-none",
+            "flex-1 cursor-text py-2 text-sm break-all select-none",
             todo.completed && "text-muted-foreground line-through"
           )}
         >
