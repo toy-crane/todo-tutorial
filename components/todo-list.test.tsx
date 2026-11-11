@@ -24,8 +24,7 @@ async function addTodoWithDue(
   fireEvent.change(screen.getByLabelText("마감일"), {
     target: { value: due },
   });
-  const input = screen.getByRole("textbox", { name: "새 할 일" });
-  await user.type(input, `${text}{Enter}`);
+  await addTodo(user, text);
 }
 
 // 5개(완료 2 / 미완료 3) 상태를 만드는 헬퍼.
