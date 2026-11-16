@@ -43,31 +43,26 @@ export function TodoApp() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="fixed inset-x-0 top-0 z-10 border-b bg-background">
-        <div className="mx-auto flex w-full max-w-md flex-col gap-4 p-6">
-          <h1 className="text-3xl font-bold tracking-tight">Todo</h1>
-          <Input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="할 일을 입력하고 Enter"
-            aria-label="새 할 일"
-            autoFocus
-          />
-          <div role="group" aria-label="필터" className="flex gap-1">
-            {FILTERS.map(({ value, label }) => (
-              <Button
-                key={value}
-                variant={filter === value ? "secondary" : "ghost"}
-                size="sm"
-                aria-pressed={filter === value}
-                onClick={() => setFilter(value)}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-        </div>
+      <Input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="할 일을 입력하고 Enter"
+        aria-label="새 할 일"
+        autoFocus
+      />
+      <div role="group" aria-label="필터" className="flex gap-1">
+        {FILTERS.map(({ value, label }) => (
+          <Button
+            key={value}
+            variant={filter === value ? "secondary" : "ghost"}
+            size="sm"
+            aria-pressed={filter === value}
+            onClick={() => setFilter(value)}
+          >
+            {label}
+          </Button>
+        ))}
       </div>
       {visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
