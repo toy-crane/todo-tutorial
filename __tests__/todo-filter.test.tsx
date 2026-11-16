@@ -17,7 +17,7 @@ function setup() {
   const user = userEvent.setup()
   render(<TodoApp />)
   const filter = (name: "전체" | "진행중" | "완료") =>
-    screen.getByRole("button", { name })
+    screen.getByRole("tab", { name })
   const itemTexts = () =>
     screen.queryAllByRole("listitem").map((li) => li.textContent)
   return { user, filter, itemTexts }
@@ -34,7 +34,7 @@ describe("TodoApp 필터", () => {
     await user.click(filter("완료"))
     await user.click(filter("전체"))
 
-    expect(filter("전체")).toHaveAttribute("aria-pressed", "true")
+    expect(filter("전체")).toHaveAttribute("aria-selected", "true")
     expect(itemTexts()).toEqual([
       "장보기",
       "청소하기",
@@ -49,7 +49,7 @@ describe("TodoApp 필터", () => {
 
     await user.click(filter("진행중"))
 
-    expect(filter("진행중")).toHaveAttribute("aria-pressed", "true")
+    expect(filter("진행중")).toHaveAttribute("aria-selected", "true")
     expect(itemTexts()).toEqual(["청소하기", "책 읽기", "빨래하기"])
   })
 
@@ -58,7 +58,7 @@ describe("TodoApp 필터", () => {
 
     await user.click(filter("완료"))
 
-    expect(filter("완료")).toHaveAttribute("aria-pressed", "true")
+    expect(filter("완료")).toHaveAttribute("aria-selected", "true")
     expect(itemTexts()).toEqual(["장보기", "운동하기"])
   })
 
@@ -81,8 +81,8 @@ describe("TodoApp 필터", () => {
       "우유 사기{Enter}"
     )
 
-    expect(filter("전체")).toHaveAttribute("aria-pressed", "true")
-    expect(filter("완료")).toHaveAttribute("aria-pressed", "false")
+    expect(filter("전체")).toHaveAttribute("aria-selected", "true")
+    expect(filter("완료")).toHaveAttribute("aria-selected", "false")
     expect(screen.getByText("우유 사기")).toBeInTheDocument()
     expect(itemTexts()).toEqual([
       "우유 사기",
