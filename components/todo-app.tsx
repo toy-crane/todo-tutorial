@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useSyncExternalStore } from "react"
 import { Trash2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,9 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: "active", label: "진행중" },
   { value: "completed", label: "완료" },
 ]
+
+// localStorage 지원 여부는 바뀌지 않으므로 구독할 이벤트가 없다
+const subscribeNothing = () => () => {}
 
 export function TodoApp() {
   const { todos, addTodo, toggleTodo, deleteTodo, editTodo, clearCompleted } =
@@ -45,7 +48,13 @@ export function TodoApp() {
     setFilter("all")
   }
 
-  const canSave = typeof window !== "undefined" && "localStorage" in window
+  const canSave = useSyncExternalStore(
+    subscribeNothing,
+    () => "localStorage" in window,
+    // 서버는 브라우저 기능을 알 수 없으므로 대부분의 경우인 "저장됨"으로 그린다.
+    // hydration이 끝난 뒤 실제 브라우저 값으로 다시 그려 불일치 에러를 막는다
+    () => true
+  )
 
   return (
     <div className="flex flex-col gap-4">
