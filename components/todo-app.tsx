@@ -19,9 +19,12 @@ const FILTERS: { value: Filter; label: string }[] = [
 ]
 
 export function TodoApp() {
-  const { todos, addTodo, toggleTodo, deleteTodo, editTodo } = useTodos()
+  const { todos, addTodo, toggleTodo, deleteTodo, editTodo, clearCompleted } =
+    useTodos()
   const [draft, setDraft] = useState("")
   const [filter, setFilter] = useState<Filter>("all")
+
+  const completedCount = todos.filter((todo) => todo.completed).length
 
   const visibleTodos = todos.filter((todo) =>
     filter === "all"
@@ -79,6 +82,18 @@ export function TodoApp() {
             />
           ))}
         </ul>
+      )}
+      {completedCount > 0 && (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearCompleted}
+            className="text-muted-foreground hover:text-destructive"
+          >
+            완료한 일 지우기 ({completedCount})
+          </Button>
+        </div>
       )}
     </div>
   )
