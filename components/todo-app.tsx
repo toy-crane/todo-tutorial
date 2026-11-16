@@ -6,12 +6,11 @@ import { Trash2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
-import { useTodos, type Category, type Todo } from "@/hooks/use-todos"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useTodos, type Todo } from "@/hooks/use-todos"
 import { cn } from "@/lib/utils"
 
 type Filter = "all" | "active" | "completed"
-type Sort = "created" | "name" | "due"
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: "all", label: "전체" },
@@ -19,181 +18,49 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: "completed", label: "완료" },
 ]
 
-const SORTS: { value: Sort; label: string }[] = [
-  { value: "created", label: "생성일순" },
-  { value: "name", label: "이름순" },
-  { value: "due", label: "마감일순" },
-]
-
-const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "work", label: "업무" },
-  { value: "personal", label: "개인" },
-  { value: "shopping", label: "쇼핑" },
-]
-
-const CATEGORY_LABEL = Object.fromEntries(
-  CATEGORIES.map(({ value, label }) => [value, label])
-) as Record<Category, string>
-
-// 정렬 비교 함수. 0을 돌려주면 저장된 순서(최근 추가가 위)를 유지한다
-const COMPARE: Record<Sort, (a: Todo, b: Todo) => number> = {
-  created: (a, b) =>
-    a.createdAt !== undefined && b.createdAt !== undefined
-      ? b.createdAt - a.createdAt
-      : 0,
-  name: (a, b) => a.text.localeCompare(b.text, "ko"),
-  // 마감일 없는 항목은 맨 뒤
-  due: (a, b) => {
-    if (a.dueDate === b.dueDate) return 0
-    if (!a.dueDate) return 1
-    if (!b.dueDate) return -1
-    return a.dueDate < b.dueDate ? -1 : 1
-  },
-}
-
 export function TodoApp() {
-  const { todos, addTodo, toggleTodo, deleteTodo, editTodo, clearCompleted } =
-    useTodos()
+  const { todos, addTodo, toggleTodo, deleteTodo, editTodo } = useTodos()
   const [draft, setDraft] = useState("")
-  const [dueDate, setDueDate] = useState("")
-  const [category, setCategory] = useState<Category | "">("")
   const [filter, setFilter] = useState<Filter>("all")
-  const [sort, setSort] = useState<Sort>("created")
-  const [query, setQuery] = useState("")
-  const [categoryView, setCategoryView] = useState<Category | "all">("all")
 
-  const completedCount = todos.filter((todo) => todo.completed).length
-  const keyword = query.trim().toLowerCase()
-  const visibleTodos = todos
-    .filter((todo) =>
-      filter === "all"
-        ? true
-        : filter === "active"
-          ? !todo.completed
-          : todo.completed
-    )
-    .filter((todo) => !keyword || todo.text.toLowerCase().includes(keyword))
-    .filter((todo) => categoryView === "all" || todo.category === categoryView)
-    .sort(COMPARE[sort])
+  const visibleTodos = todos.filter((todo) =>
+    filter === "all"
+      ? true
+      : filter === "active"
+        ? !todo.completed
+        : todo.completed
+  )
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // 한글 조합 중 Enter는 무시 (중복 추가 방지)
     if (e.key !== "Enter" || e.nativeEvent.isComposing) return
     const text = draft.trim()
     if (!text) return
-    addTodo(text, {
-      dueDate: dueDate || undefined,
-      category: category || undefined,
-    })
+    addTodo(text)
     setDraft("")
-    setDueDate("")
-    setCategory("")
-    // 새 항목이 필터·검색에 가려지지 않도록 전체 보기로 돌아간다
+    // 새 항목이 필터에 가려지지 않도록 전체 보기로 돌아간다
     setFilter("all")
-    setQuery("")
-    setCategoryView("all")
   }
-
-  const canSave = typeof window !== "undefined" && "localStorage" in window
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-muted-foreground">
-        {canSave
-          ? "할 일은 이 브라우저에 저장됩니다"
-          : "이 브라우저에서는 할 일이 저장되지 않습니다"}
-      </p>
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="할 일을 입력하고 Enter"
-          aria-label="새 할 일"
-          autoFocus
-          className="flex-1"
-        />
-        <div className="flex gap-2">
-          <Input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            aria-label="마감일"
-            className="w-auto"
-          />
-          <NativeSelect
-            value={category}
-            onChange={(e) => setCategory(e.target.value as Category | "")}
-            aria-label="카테고리"
-          >
-            <NativeSelectOption value="">카테고리 없음</NativeSelectOption>
-            {CATEGORIES.map(({ value, label }) => (
-              <NativeSelectOption key={value} value={value}>
-                {label}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-        </div>
-      </div>
       <Input
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="제목으로 검색"
-        aria-label="검색"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="할 일을 입력하고 Enter"
+        aria-label="새 할 일"
+        autoFocus
       />
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div role="group" aria-label="필터" className="flex gap-1">
+      <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+        <TabsList aria-label="필터">
           {FILTERS.map(({ value, label }) => (
-            <Button
-              key={value}
-              variant={filter === value ? "secondary" : "ghost"}
-              size="sm"
-              aria-pressed={filter === value}
-              onClick={() => setFilter(value)}
-            >
+            <TabsTrigger key={value} value={value}>
               {label}
-            </Button>
+            </TabsTrigger>
           ))}
-        </div>
-        <NativeSelect
-          value={categoryView}
-          onChange={(e) => setCategoryView(e.target.value as Category | "all")}
-          aria-label="카테고리 보기"
-        >
-          <NativeSelectOption value="all">전체</NativeSelectOption>
-          {CATEGORIES.map(({ value, label }) => (
-            <NativeSelectOption key={value} value={value}>
-              {label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div role="group" aria-label="정렬" className="flex gap-1">
-          {SORTS.map(({ value, label }) => (
-            <Button
-              key={value}
-              variant={sort === value ? "secondary" : "ghost"}
-              size="sm"
-              aria-pressed={sort === value}
-              onClick={() => setSort(value)}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
-        {/* 필터·검색과 상관없이 완료한 항목 전체를 지운다 */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={clearCompleted}
-          disabled={completedCount === 0}
-          className="text-muted-foreground hover:text-destructive"
-        >
-          완료 항목 지우기 ({completedCount})
-        </Button>
-      </div>
+        </TabsList>
+      </Tabs>
       {visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
           {todos.length === 0
@@ -277,7 +144,6 @@ function TodoItem({
         />
       ) : (
         <span
-          data-testid="todo-text"
           onDoubleClick={startEdit}
           className={cn(
             "flex-1 cursor-text py-2 text-sm break-all select-none",
@@ -285,16 +151,6 @@ function TodoItem({
           )}
         >
           {todo.text}
-        </span>
-      )}
-      {todo.category && (
-        <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-          {CATEGORY_LABEL[todo.category]}
-        </span>
-      )}
-      {todo.dueDate && (
-        <span className="text-xs whitespace-nowrap text-muted-foreground">
-          마감 {todo.dueDate}
         </span>
       )}
       <Button
