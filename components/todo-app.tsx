@@ -150,7 +150,7 @@ function TodoItem({
           onDoubleClick={startEdit}
           className={cn(
             "flex-1 cursor-text py-2 text-sm break-all select-none",
-            todo.completed && "text-muted-foreground line-through"
+            todo.completed && "text-muted line-through"
           )}
         >
           {todo.text}
