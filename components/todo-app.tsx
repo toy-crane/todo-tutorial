@@ -6,6 +6,7 @@ import { Trash2Icon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useTodos, type Todo } from "@/hooks/use-todos"
 import { cn } from "@/lib/utils"
 
@@ -51,19 +52,15 @@ export function TodoApp() {
         aria-label="새 할 일"
         autoFocus
       />
-      <div role="group" aria-label="필터" className="flex gap-1">
-        {FILTERS.map(({ value, label }) => (
-          <Button
-            key={value}
-            variant={filter === value ? "secondary" : "ghost"}
-            size="sm"
-            aria-pressed={filter === value}
-            onClick={() => setFilter(value)}
-          >
-            {label}
-          </Button>
-        ))}
-      </div>
+      <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+        <TabsList aria-label="필터">
+          {FILTERS.map(({ value, label }) => (
+            <TabsTrigger key={value} value={value}>
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
       {visibleTodos.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
           {todos.length === 0
